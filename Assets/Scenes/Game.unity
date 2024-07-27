@@ -289,6 +289,7 @@ MonoBehaviour:
   highlightMaterial: {fileID: 2100000, guid: b42f3e2a238d2e84fb063d38dc9e1fdf, type: 2}
   selectionMaterial: {fileID: 2100000, guid: 64551368554de5844a48942fb41c1cdc, type: 2}
   delayBeforeDestroy: 0.5
+  list: []
 --- !u!1001 &331150569
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1189,6 +1190,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2044465700}
+  - component: {fileID: 2044465701}
   m_Layer: 0
   m_Name: AI Player
   m_TagString: Untagged
@@ -1211,6 +1213,23 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2044465701
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2044465698}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92f03025e10114244b5a7eaa3356a944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelSelect: 0
+  pieceSelect: 0
+  performMove: 0
+  jengaTower: {fileID: 2127037710}
+  jengaTowerLevels: []
 --- !u!4 &2064357171 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1616234842719145481, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
@@ -1251,12 +1270,12 @@ Transform:
   - {fileID: 630817005}
   - {fileID: 2064357171}
   - {fileID: 1888990069}
-  - {fileID: 1995390364}
   - {fileID: 1712188097}
-  - {fileID: 1391364430}
+  - {fileID: 1995390364}
   - {fileID: 1226592688}
-  - {fileID: 1561395207}
+  - {fileID: 1391364430}
   - {fileID: 1271563574}
+  - {fileID: 1561395207}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2131161606
