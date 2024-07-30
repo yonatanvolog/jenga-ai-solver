@@ -1,13 +1,16 @@
+using System.Linq;
 using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour
 {
-    public Player[] players; // Array of player references
+    public HumanPlayer[] humanPlayers; // Array of human player references
+    public AiPlayer[] aiPlayers; // Array of AI player references
 
+    public IPlayer[] players;
     public static GameManager Instance;
 
-    private int currentPlayerIndex;
+    public int currentPlayerIndex;
     private bool isPlayerTurn;
     
     private void Awake()
@@ -24,6 +27,11 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Combine humanPlayers and aiPlayers into players array
+        players = humanPlayers.Cast<IPlayer>()
+            .Concat(aiPlayers.Cast<IPlayer>())
+            .ToArray();
+
         StartTurn(0); // Start with player 0
     }
 

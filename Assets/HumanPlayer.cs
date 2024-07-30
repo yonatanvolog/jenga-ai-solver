@@ -1,29 +1,31 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class HumanPlayer : MonoBehaviour
+public class HumanPlayer : MonoBehaviour, IPlayer
 {
     public Selector selector;
 
-    public void PerformMove()
+    public void StartTurn()
     {
-        selector.enabled = true;
-        // while (!selector.IsPieceSelected())
-        // {
-        // }
-        selector.enabled = false;
-    }
-    
-    // Start is called before the first frame update
-    void Start()
-    {
-        
+        Debug.Log("Human player turn");
+        StartCoroutine(HandleTurn());
     }
 
-    // Update is called once per frame
-    void Update()
+    private IEnumerator HandleTurn()
     {
-        
+        selector.enabled = true;
+        while (!selector.IsPieceSelected())
+        {
+            yield return null; // Wait for the next frame
+        }
+        selector.enabled = false;
+        EndTurn();
+    }
+
+    public void EndTurn()
+    {
+        Debug.Log("Human ended turn");
+
+        GameManager.Instance.EndTurn(); // Notify the GameManager that the player has finished their turn
     }
 }

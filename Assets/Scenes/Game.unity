@@ -123,6 +123,67 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &13858293
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 13858296}
+  - component: {fileID: 13858294}
+  - component: {fileID: 13858295}
+  m_Layer: 0
+  m_Name: AiPlayer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &13858294
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13858293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 92f03025e10114244b5a7eaa3356a944, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  levelSelect: 0
+  pieceSelect: 0
+  performMove: 0
+--- !u!114 &13858295
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13858293}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c357e543b0af427439f82cfa4822f098, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  selector: {fileID: 338126282}
+--- !u!4 &13858296
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 13858293}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2023824858}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &124982732 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1616234842719145481, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
@@ -346,6 +407,56 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
+--- !u!1 &338126281
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 338126283}
+  - component: {fileID: 338126282}
+  m_Layer: 0
+  m_Name: AiSelector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &338126282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338126281}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00eaa752eba67aa47a636388f98fda75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightMaterial: {fileID: 2100000, guid: 64551368554de5844a48942fb41c1cdc, type: 2}
+  selectionMaterial: {fileID: 2100000, guid: b42f3e2a238d2e84fb063d38dc9e1fdf, type: 2}
+  highlightTime: 0.5
+  selectedTime: 0.5
+  aiPlayer: {fileID: 13858294}
+  jengaTower: {fileID: 2127037710}
+--- !u!4 &338126283
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 338126281}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &436806927
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +498,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 436806927}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d1f3f9e4a08a14eb605fcbff9524db, type: 3}
+  m_Script: {fileID: 11500000, guid: a8c2e2debe6d1a042a06c3768b8e5e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selector: {fileID: 1796218438}
@@ -1271,7 +1382,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1727368850
 Transform:
   m_ObjectHideFlags: 0
@@ -1296,7 +1407,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1727368848}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e3d1f3f9e4a08a14eb605fcbff9524db, type: 3}
+  m_Script: {fileID: 11500000, guid: a8c2e2debe6d1a042a06c3768b8e5e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   selector: {fileID: 1796218438}
@@ -1608,9 +1719,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 572621748288dea4aa1f38ed687766d9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  players:
+  humanPlayers:
   - {fileID: 436806930}
-  - {fileID: 1727368851}
+  aiPlayers:
+  - {fileID: 13858295}
+  currentPlayerIndex: 0
 --- !u!1 &2023824857
 GameObject:
   m_ObjectHideFlags: 0
@@ -1642,6 +1755,7 @@ Transform:
   m_Children:
   - {fileID: 436806929}
   - {fileID: 1727368850}
+  - {fileID: 13858296}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2044465698
@@ -1691,8 +1805,6 @@ MonoBehaviour:
   levelSelect: 0
   pieceSelect: 0
   performMove: 0
-  jengaTower: {fileID: 2127037710}
-  jengaTowerLevels: []
 --- !u!4 &2064357171 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1616234842719145481, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
@@ -1870,3 +1982,4 @@ SceneRoots:
   - {fileID: 2017619807}
   - {fileID: 2023824858}
   - {fileID: 1796218439}
+  - {fileID: 338126283}

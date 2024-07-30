@@ -1,12 +1,16 @@
 using System.Collections;
 using UnityEngine;
 
-public class Player : MonoBehaviour, IPlayer
+public class AiPlayer : MonoBehaviour, IPlayer
 {
-    public Selector selector;
+    public AiSelector selector;
+    /// <summary>
+    ///TODO: add AIPlayerAPI aiPlayer referece that will use the TCP listener
+    /// </summary>
 
     public void StartTurn()
     {
+        Debug.Log("AI player turn");
         StartCoroutine(HandleTurn());
     }
 
@@ -15,6 +19,10 @@ public class Player : MonoBehaviour, IPlayer
         selector.enabled = true;
         while (!selector.IsPieceSelected())
         {
+            // TODO: remove AIPlayerAPI aiPlayer reference from AiSelector and  add it here, depending on the choosing
+            // of the listener, notify selector here:
+            // selector.SetSelectedPiece(0,g), selector already implements choosing by level and color
+
             yield return null; // Wait for the next frame
         }
         selector.enabled = false;
