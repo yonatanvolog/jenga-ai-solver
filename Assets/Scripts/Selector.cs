@@ -1,9 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class Selectn : MonoBehaviour
+public class Selector : MonoBehaviour
 {
     public Material highlightMaterial;
     public Material selectionMaterial;
@@ -14,6 +15,22 @@ public class Selectn : MonoBehaviour
     private Transform highlight;
     private Transform selection;
     private RaycastHit raycastHit;
+    private bool pieceSelected;
+
+    private void OnEnable()
+    {
+        pieceSelected = false;
+    }
+    
+    private void OnDisable()
+    {
+        pieceSelected = false;
+    }
+
+    public bool IsPieceSelected()
+    {
+        return pieceSelected;
+    }
 
     void Update()
     {
@@ -59,6 +76,7 @@ public class Selectn : MonoBehaviour
                 highlight = null;
 
                 // Start coroutine to destroy the selected object after 1 second
+                pieceSelected = true;
                 StartCoroutine(DestroySelectedObjectAfterDelay(selection.gameObject, delayBeforeDestroy));
             }
             else
