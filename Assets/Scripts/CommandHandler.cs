@@ -8,11 +8,13 @@ public class CommandHandler : MonoBehaviour
         Remove,
         Reset,
         Timescale,
-        IsFallen,
+        SetStaticFriction,
+        SetDynamicFriction,
         Unknown
     }
 
     public AIPlayerAPI aiPlayerAPI;
+    public PhysicMaterial jengaPhysicsMaterial;  // Assign this in the Inspector or via script
     private GameManager gameManager;
     private SynchronizationContext mainThreadContext;
 
@@ -36,26 +38,34 @@ public class CommandHandler : MonoBehaviour
     public string HandleCommand(string data)
     {
         CommandType commandType = ParseCommand(data);
+        string response = "ACK"; // Default response
 
         switch (commandType)
         {
             case CommandType.Remove:
                 HandleRemoveCommand(data);
-                return "ok, play again";
+                break;
             case CommandType.Reset:
                 HandleResetCommand();
-                return "ok, play again";
+                break;
             case CommandType.Timescale:
                 HandleTimescale(data);
-                return "ok, play again";
-            case CommandType.IsFallen:
-                return HandleIsFallenCommand();
+                break;
+            case CommandType.SetStaticFriction:
+                HandleSetStaticFriction(data);
+                break;
+            case CommandType.SetDynamicFriction:
+                HandleSetDynamicFriction(data);
+                break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
-                return "Unknown command";
+                response = "Unknown command";
+                break;
         }
-        return null;
+
+        return response;
     }
+
 
     private CommandType ParseCommand(string data)
     {
@@ -71,9 +81,13 @@ public class CommandHandler : MonoBehaviour
         {
             return CommandType.Timescale;
         }
-        else if (data.Equals("isfallen"))
+        else if (data.StartsWith("staticfriction"))
         {
-            return CommandType.IsFallen;
+            return CommandType.SetStaticFriction;
+        }
+        else if (data.StartsWith("dynamicfriction"))
+        {
+            return CommandType.SetDynamicFriction;
         }
         else
         {
@@ -136,18 +150,35 @@ public class CommandHandler : MonoBehaviour
         }
     }
 
-    private string HandleIsFallenCommand()
+    private void HandleSetStaticFriction(string data)
     {
-        if (gameManager != null)
+        string[] parts = data.Split(' ');
+        if (parts.Length == 2 && float.TryParse(parts[1], out float staticFriction))
         {
-            // Check if the tower has fallen and return the result
-            bool isFallen = gameManager.IsTowerFallen();
-            return isFallen.ToString().ToLower();
+            Debug.Log($"Setting static friction to {staticFriction}");
+
+            // Post the static friction change to the main thread
+            mainThreadContext.Post(_ => jengaPhysicsMaterial.staticFriction = staticFriction, null);
         }
         else
         {
-            Debug.LogError("GameManager is not available to check if the tower has fallen.");
-            return "false";
+            Debug.LogError("Invalid static friction value received.");
+        }
+    }
+
+    private void HandleSetDynamicFriction(string data)
+    {
+        string[] parts = data.Split(' ');
+        if (parts.Length == 2 && float.TryParse(parts[1], out float dynamicFriction))
+        {
+            Debug.Log($"Setting dynamic friction to {dynamicFriction}");
+
+            // Post the dynamic friction change to the main thread
+            mainThreadContext.Post(_ => jengaPhysicsMaterial.dynamicFriction = dynamicFriction, null);
+        }
+        else
+        {
+            Debug.LogError("Invalid dynamic friction value received.");
         }
     }
 }

@@ -5,23 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="a3fb2362-c21e-4cfe-927e-59cedb8e6898" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jenga-ai-solver.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/PythonClient.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/PythonClient.py.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/PythonListener.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Assets/PythonListener.cs.meta" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/GameManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/GameManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Prefab/piece.prefab" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Prefab/piece.prefab" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scenes/Game.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/Game.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/AiSelector.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/AiSelector.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/EditorBuildSettings.asset" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/ProjectSettings/ProjectSettings.asset" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Screenshots/Screenshot_18-08-2024-00-49-07.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Screenshots/Screenshot_18-08-2024-00-49-07.png.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/CommandHandler.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/CommandHandler.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Scripts/PythonListener.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/PythonListener.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/environment.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -201,7 +192,7 @@
       <option name="presentableId" value="Default" />
       <updated>1722357240795</updated>
       <workItem from="1722357245017" duration="853000" />
-      <workItem from="1723916017565" duration="10185000" />
+      <workItem from="1723916017565" duration="13332000" />
     </task>
     <servers />
   </component>
@@ -211,6 +202,6 @@
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/jenga_ai_solver$PythonClient.coverage" NAME="PythonClient Coverage Results" MODIFIED="1722357479041" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Assets" />
     <SUITE FILE_PATH="coverage/PythonClient_py$PythonClient.coverage" NAME="PythonClient Coverage Results" MODIFIED="1723925539443" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Assets" />
-    <SUITE FILE_PATH="coverage/PythonClient_py$environment.coverage" NAME="environment Coverage Results" MODIFIED="1723931278065" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/PythonClient_py$environment.coverage" NAME="environment Coverage Results" MODIFIED="1723934304152" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

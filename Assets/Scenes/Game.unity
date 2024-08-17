@@ -200,6 +200,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   aiPlayerAPI: {fileID: 13858294}
+  jengaPhysicsMaterial: {fileID: 13400000, guid: abeb907fa39189444aab18ae3e071047, type: 2}
 --- !u!114 &13858299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2523,6 +2524,7 @@ MonoBehaviour:
   humanPlayers: []
   aiPlayers: []
   fallDetectorsParent: {fileID: 755629872}
+  isTowerFallen: 0
   currentPlayerIndex: 0
 --- !u!1 &2023824857
 GameObject:

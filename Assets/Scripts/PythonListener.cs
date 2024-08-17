@@ -75,7 +75,7 @@ public class PythonListener : MonoBehaviour
                     string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
                     string response = commandHandler.HandleCommand(dataReceived);
 
-                    if (response != null)
+                    if (!string.IsNullOrEmpty(response))
                     {
                         byte[] responseBytes = Encoding.UTF8.GetBytes(response);
                         nwStream.Write(responseBytes, 0, responseBytes.Length);
