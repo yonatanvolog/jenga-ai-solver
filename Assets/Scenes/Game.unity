@@ -440,6 +440,7 @@ MonoBehaviour:
   selectionMaterial: {fileID: 2100000, guid: b42f3e2a238d2e84fb063d38dc9e1fdf, type: 2}
   highlightTime: 0.5
   selectedTime: 0.5
+  delayEnabled: 0
   aiPlayer: {fileID: 13858294}
   jengaTower: {fileID: 2127037710}
 --- !u!4 &338126283

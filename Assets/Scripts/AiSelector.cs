@@ -10,6 +10,7 @@ public class AiSelector : MonoBehaviour
     public Material selectionMaterial;
     public float highlightTime = 1.0f; // Time to show highlight material
     public float selectedTime = 1.0f;  // Time to show selected material before destruction
+    public bool delayEnabled = true; // Field to enable/disable delay
 
     public AIPlayerAPI aiPlayer;
 
@@ -128,7 +129,10 @@ public class AiSelector : MonoBehaviour
         }
 
         // Wait for highlight time
-        yield return new WaitForSeconds(highlightTime);
+        if (delayEnabled)
+        {
+            yield return new WaitForSeconds(highlightTime);
+        }
 
         // Change material to selected
         if (renderer != null)
@@ -138,7 +142,10 @@ public class AiSelector : MonoBehaviour
         }
 
         // Wait for selected time
-        yield return new WaitForSeconds(selectedTime);
+        if (delayEnabled)
+        {
+            yield return new WaitForSeconds(selectedTime);
+        }
 
         // Destroy the piece
         Destroy(pieceTransform.gameObject);
