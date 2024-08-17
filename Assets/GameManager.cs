@@ -6,6 +6,7 @@ public class GameManager : MonoBehaviour
 {
     public HumanPlayer[] humanPlayers; // Array of human player references
     public AiPlayer[] aiPlayers; // Array of AI player references
+    public GameObject fallDetectorsParent; // Parent GameObject containing fall detectors
 
     public IPlayer[] players;
     public static GameManager Instance;
@@ -31,6 +32,19 @@ public class GameManager : MonoBehaviour
         players = humanPlayers.Cast<IPlayer>()
             .Concat(aiPlayers.Cast<IPlayer>())
             .ToArray();
+
+        // Set up fall detectors from the children of fallDetectorsParent
+        if (fallDetectorsParent != null)
+        {
+            foreach (Transform detector in fallDetectorsParent.transform)
+            {
+                var fallDetector = detector.GetComponent<FallDetector>();
+                if (fallDetector != null)
+                {
+                    fallDetector.OnTowerFall += HandleTowerFall;
+                }
+            }
+        }
 
         StartTurn(0); // Start with player 0
     }
@@ -65,5 +79,20 @@ public class GameManager : MonoBehaviour
     public void EndTurn()
     {
         isPlayerTurn = false; // End the current player's turn
+    }
+
+    private void HandleTowerFall()
+    {
+        // Restart the game when the tower falls
+        Debug.Log("The tower has fallen! Restarting the game...");
+        RestartGame();
+    }
+
+    public void RestartGame()
+    {
+        // Implement your restart logic here
+        // For example, reload the scene or reset the game state
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }
