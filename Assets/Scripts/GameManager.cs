@@ -1,19 +1,23 @@
 using System.Linq;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
     public HumanPlayer[] humanPlayers; // Array of human player references
     public AiPlayer[] aiPlayers; // Array of AI player references
     public GameObject fallDetectorsParent; // Parent GameObject containing fall detectors
-
+    public bool isTowerFallen = false;
     public IPlayer[] players;
     public static GameManager Instance;
 
     public int currentPlayerIndex;
     private bool isPlayerTurn;
-    
+
+    // Private field to store the GameManager instance
+    private GameManager gameManager;
+
     private void Awake()
     {
         if (Instance == null)
@@ -28,6 +32,9 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        // Save a reference to the GameManager instance
+        gameManager = GameManager.Instance;
+
         // Combine humanPlayers and aiPlayers into players array
         players = humanPlayers.Cast<IPlayer>()
             .Concat(aiPlayers.Cast<IPlayer>())
@@ -85,14 +92,25 @@ public class GameManager : MonoBehaviour
     {
         // Restart the game when the tower falls
         Debug.Log("The tower has fallen! Restarting the game...");
-        RestartGame();
+        isTowerFallen = true;
+        //gameManager.RestartGame();
+    }
+
+    public bool IsTowerFallen()
+    {
+        return isTowerFallen;
     }
 
     public void RestartGame()
     {
-        // Implement your restart logic here
-        // For example, reload the scene or reset the game state
+        // Find the PythonListener and stop it
+        PythonListener pythonListener = FindObjectOfType<PythonListener>();
+        if (pythonListener != null)
+        {
+            pythonListener.StopListener();
+        }
 
+        // Reload the current scene
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
 }

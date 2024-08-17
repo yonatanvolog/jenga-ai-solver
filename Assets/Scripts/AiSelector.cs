@@ -2,8 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-//This class knows what pieces of the jenga tower are in place and selects the piece AiPlayer wants to select (if it exists).
-//It saves the structure of the tower, because just like a person would see what piees are in game, this class simulates that.
 public class AiSelector : MonoBehaviour
 {
     public Material highlightMaterial;
@@ -18,15 +16,25 @@ public class AiSelector : MonoBehaviour
     private Material originalMaterialSelection;
     private bool pieceSelected;
 
-
     // Reference to the Jenga tower object
     public GameObject jengaTower;
 
     // List of Jenga levels
     public List<JengaLevel> jengaTowerLevels = new List<JengaLevel>();
 
+    // Reference to the Screenshot component
+    private Screenshot screenshot;
+
     void Start()
     {
+        // Find the Screenshot object in the scene
+        screenshot = FindObjectOfType<Screenshot>();
+
+        if (screenshot == null)
+        {
+            Debug.LogError("Screenshot component not found in the scene.");
+        }
+
         ParseJengaTower();
     }
 
@@ -115,38 +123,24 @@ public class AiSelector : MonoBehaviour
 
         // Perform the move (e.g., change material and destroy the piece)
         pieceSelected = true;
-        StartCoroutine(HandlePieceMove(pieceTransform));
+        HandlePieceMoveQuick(pieceTransform);
+        StartCoroutine(TakeScreenshotAfterFrame());
     }
 
-    private IEnumerator HandlePieceMove(Transform pieceTransform)
+    private IEnumerator TakeScreenshotAfterFrame()
     {
-        // Change material to highlight
-        Renderer renderer = pieceTransform.GetComponent<Renderer>();
-        if (renderer != null)
-        {
-            originalMaterialHighlight = renderer.material;
-            renderer.material = highlightMaterial;
-        }
+        // Wait until the end of the frame before taking the screenshot
+        yield return new WaitForEndOfFrame();
 
-        // Wait for highlight time
-        if (delayEnabled)
+        // Call TakeScreenshot after the frame has been rendered
+        if (screenshot != null)
         {
-            yield return new WaitForSeconds(highlightTime);
+            screenshot.TakeScreenshot();
         }
+    }
 
-        // Change material to selected
-        if (renderer != null)
-        {
-            originalMaterialSelection = highlightMaterial;
-            renderer.material = selectionMaterial;
-        }
-
-        // Wait for selected time
-        if (delayEnabled)
-        {
-            yield return new WaitForSeconds(selectedTime);
-        }
-
+    private void HandlePieceMoveQuick(Transform pieceTransform)
+    {
         // Destroy the piece
         Destroy(pieceTransform.gameObject);
 
