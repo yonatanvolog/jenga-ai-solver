@@ -11,6 +11,7 @@ class CommandType(Enum):
     ISFALLEN = "isfallen"
     SETSTATICFRICTION = "staticfriction"
     SETDYNAMICFRICTION = "dynamicfriction"
+    SETSCREENSHOTRES = "set_screenshot_res"
     UNKNOWN = "unknown"
 
 
@@ -80,7 +81,7 @@ class Environment:
             static_friction (float): The static friction value to set.
 
         Note:
-            This value is not saved between runs of the game and defaults to 1. You need to set it each time to ensure it is at the desired value.
+            This value is saved between runs of the game, so you need to set it to ensure it is at the desired value.
         """
         command = f"staticfriction {static_friction}"
         response = self.send_command(command)
@@ -94,9 +95,21 @@ class Environment:
             dynamic_friction (float): The dynamic friction value to set.
 
         Note:
-            This value is not saved between runs of the game and defaults to 1. You need to set it each time to ensure it is at the desired value.
+            This value is saved between runs of the game, so you need to set it to ensure it is at the desired value.
         """
         command = f"dynamicfriction {dynamic_friction}"
+        response = self.send_command(command)
+        return response
+
+    def set_screenshot_res(self, width):
+        """
+        Set the resolution width for screenshots taken in the Jenga game.
+        By default, resolution is 240p: 426×240.
+
+        Parameters:
+            width (int): The width to set for the screenshot resolution.
+        """
+        command = f"set_screenshot_res {width}"
         response = self.send_command(command)
         return response
 
@@ -150,7 +163,8 @@ def main():
         print("3: Set Timescale")
         print("4: Set Static Friction")
         print("5: Set Dynamic Friction")
-        print("6: Exit")
+        print("6: Set Screenshot Resolution")
+        print("7: Exit")
 
         choice = input("Enter the number of your choice: ").strip()
 
@@ -195,6 +209,16 @@ def main():
             print("Dynamic friction set.")
 
         elif choice == "6":
+            width = input("Enter the screenshot resolution width: ").strip()
+            if width.isdigit():
+                width = int(width)
+                print(f"Setting screenshot resolution width to {width}...")
+                env.set_screenshot_res(width)
+                print("Screenshot resolution set.")
+            else:
+                print("Invalid width value.")
+
+        elif choice == "7":
             print("Exiting...")
             break
 

@@ -2594,8 +2594,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   screenshotCamera: {fileID: 178564372}
-  resolutionWidth: 128
-  resolutionHeight: 64
+  resolutionWidth: 426
+  resolutionHeight: 240
 --- !u!4 &2102158154
 Transform:
   m_ObjectHideFlags: 0

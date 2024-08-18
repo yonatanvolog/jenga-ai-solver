@@ -10,12 +10,14 @@ public class CommandHandler : MonoBehaviour
         Timescale,
         SetStaticFriction,
         SetDynamicFriction,
+        SetScreenshotRes,
         Unknown
     }
 
     public AIPlayerAPI aiPlayerAPI;
     public PhysicMaterial jengaPhysicsMaterial;  // Assign this in the Inspector or via script
     private GameManager gameManager;
+    private Screenshot screenshot;  // Field to store the Screenshot component
     private SynchronizationContext mainThreadContext;
 
     void Start()
@@ -29,6 +31,12 @@ public class CommandHandler : MonoBehaviour
         if (gameManager == null)
         {
             Debug.LogError("GameManager not found in the scene.");
+        }
+
+        screenshot = GameObject.FindObjectOfType<Screenshot>();
+        if (screenshot == null)
+        {
+            Debug.LogError("Screenshot component not found in the scene.");
         }
 
         // Capture the synchronization context of the main thread
@@ -57,6 +65,9 @@ public class CommandHandler : MonoBehaviour
             case CommandType.SetDynamicFriction:
                 HandleSetDynamicFriction(data);
                 break;
+            case CommandType.SetScreenshotRes:
+                HandleSetScreenshotRes(data);
+                break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
                 response = "Unknown command";
@@ -65,7 +76,6 @@ public class CommandHandler : MonoBehaviour
 
         return response;
     }
-
 
     private CommandType ParseCommand(string data)
     {
@@ -88,6 +98,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.StartsWith("dynamicfriction"))
         {
             return CommandType.SetDynamicFriction;
+        }
+        else if (data.StartsWith("set_screenshot_res"))
+        {
+            return CommandType.SetScreenshotRes;
         }
         else
         {
@@ -179,6 +193,22 @@ public class CommandHandler : MonoBehaviour
         else
         {
             Debug.LogError("Invalid dynamic friction value received.");
+        }
+    }
+
+    private void HandleSetScreenshotRes(string data)
+    {
+        string[] parts = data.Split(' ');
+        if (parts.Length == 2 && int.TryParse(parts[1], out int width))
+        {
+            Debug.Log($"Setting screenshot resolution width to {width}");
+
+            // Set the screenshot resolution width
+            mainThreadContext.Post(_ => screenshot.SetFinalWidth(width), null);
+        }
+        else
+        {
+            Debug.LogError("Invalid screenshot width value received.");
         }
     }
 }

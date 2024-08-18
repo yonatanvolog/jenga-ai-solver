@@ -4,8 +4,8 @@ using System.IO;
 public class Screenshot : MonoBehaviour
 {
     public Camera screenshotCamera; // Assign the camera from which you want to capture the screenshot in the Inspector
-    public int resolutionWidth = 128;  // Set the width of the screenshot in the Inspector
-    public int resolutionHeight = 64;  // Set the height of the screenshot in the Inspector
+    public int resolutionWidth = 128;  // Set the initial width of the screenshot in the Inspector
+    public int resolutionHeight = 72;  // Set the initial height of the screenshot in the Inspector
 
     private void Update()
     {
@@ -13,6 +13,15 @@ public class Screenshot : MonoBehaviour
         {
             TakeScreenshot();
         }
+    }
+
+    public void SetFinalWidth(int width)
+    {
+        // Calculate resolutionWidth and resolutionHeight to maintain a 16:9 aspect ratio
+        resolutionWidth = Mathf.RoundToInt(width * (1 / screenshotCamera.rect.width));
+        resolutionHeight = Mathf.RoundToInt((resolutionWidth * 9) / 16);
+
+        Debug.Log($"Screenshot resolution set to {resolutionWidth}x{resolutionHeight}");
     }
 
     public void TakeScreenshot()
