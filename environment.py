@@ -1,8 +1,10 @@
 import socket
 import os
 import time
+import subprocess
+import atexit
+import signal
 from enum import Enum
-
 
 class CommandType(Enum):
     REMOVE = "remove"
@@ -14,12 +16,58 @@ class CommandType(Enum):
     SETSCREENSHOTRES = "set_screenshot_res"
     UNKNOWN = "unknown"
 
-
 class Environment:
-    def __init__(self, host="127.0.0.1", port=25001):
-        """Initialize the Environment with the host and port for communication with Unity."""
+    def __init__(self, host="127.0.0.1", port=25001, unity_exe_path=None):
+        """Initialize the Environment with the host, port, and path to the Unity executable."""
         self.host = host
         self.port = port
+        self.unity_exe_path = unity_exe_path
+        self.unity_process = None
+
+        if self.unity_exe_path:
+            try:
+                self.start_unity()
+            except FileNotFoundError:
+                print(f"Warning: Unity executable not found at {self.unity_exe_path}. Continuing without launching Unity.")
+
+        # Register the cleanup handler to ensure Unity is closed
+        atexit.register(self.cleanup)
+
+        # Handle signals for clean termination
+        signal.signal(signal.SIGTERM, self.signal_handler)
+        signal.signal(signal.SIGINT, self.signal_handler)
+
+    def __enter__(self):
+        """Context management entry point."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context management exit point for cleanup."""
+        self.cleanup()
+
+    def start_unity(self):
+        """Start the Unity executable."""
+        if self.unity_exe_path and not self.unity_process:
+            self.unity_process = subprocess.Popen([self.unity_exe_path])
+            print(f"Started Unity from {self.unity_exe_path}")
+
+    def stop_unity(self):
+        """Stop the Unity executable."""
+        if self.unity_process:
+            self.unity_process.terminate()
+            self.unity_process.wait()  # Ensure the process has terminated
+            print("Unity process terminated.")
+            self.unity_process = None
+
+    def cleanup(self):
+        """Cleanup function to stop Unity when the Python script exits."""
+        self.stop_unity()
+
+    def signal_handler(self, signum, frame):
+        """Handle termination signals to clean up resources."""
+        print(f"Received signal {signum}, terminating Unity and exiting...")
+        self.cleanup()
+        exit(0)
 
     def send_command(self, command):
         """Send a command to the Unity environment and receive the response."""
@@ -104,7 +152,6 @@ class Environment:
     def set_screenshot_res(self, width):
         """
         Set the resolution width for screenshots taken in the Jenga game.
-        By default, resolution is 240p: 426×240.
 
         Parameters:
             width (int): The width to set for the screenshot resolution.
@@ -141,8 +188,7 @@ class Environment:
         screenshot_dir = os.path.join(os.getcwd(), "Assets", "Screenshots")
 
         # Find the only PNG file in the directory
-        png_files = [f for f in os.listdir(screenshot_dir) if
-                     f.endswith('.png')]
+        png_files = [f for f in os.listdir(screenshot_dir) if f.endswith('.png')]
 
         if len(png_files) == 1:
             screenshot_path = os.path.join(screenshot_dir, png_files[0])
@@ -152,79 +198,77 @@ class Environment:
                 "Expected one PNG file in the directory, but found {}".format(
                     len(png_files)))
 
-
 def main():
-    env = Environment()
+    unity_exe_path = os.path.join(os.getcwd(), "jenga-ai-solver.exe")  # Path to the Unity executable in the same folder
+    with Environment(unity_exe_path=unity_exe_path) as env:
+        while True:
+            print("\nWhat action would you like to do?")
+            print("1: Reset Environment")
+            print("2: Perform Action (Remove Piece)")
+            print("3: Set Timescale")
+            print("4: Set Static Friction")
+            print("5: Set Dynamic Friction")
+            print("6: Set Screenshot Resolution")
+            print("7: Exit")
 
-    while True:
-        print("\nWhat action would you like to do?")
-        print("1: Reset Environment")
-        print("2: Perform Action (Remove Piece)")
-        print("3: Set Timescale")
-        print("4: Set Static Friction")
-        print("5: Set Dynamic Friction")
-        print("6: Set Screenshot Resolution")
-        print("7: Exit")
+            choice = input("Enter the number of your choice: ").strip()
 
-        choice = input("Enter the number of your choice: ").strip()
+            if choice == "1":
+                print("Resetting environment...")
+                env.reset()
+                print("Environment reset.")
 
-        if choice == "1":
-            print("Resetting environment...")
-            env.reset()
-            print("Environment reset.")
+            elif choice == "2":
+                level = input("Enter the level number: ").strip()
+                color = input("Enter the color (y, b, g): ").strip()
+                wait_seconds = input(
+                    "Enter the wait time in seconds (default is 0.5): ").strip()
+                if wait_seconds:
+                    wait_seconds = float(wait_seconds)
+                else:
+                    wait_seconds = 0.5
+                action = (level, color)
+                print(
+                    f"Performing action: remove piece at level {level}, color {color}...")
+                screenshot, is_fallen = env.step(action, wait_seconds)
+                print(f"Action performed. Screenshot saved at: {screenshot}")
+                print(f"Has the tower fallen? {'Yes' if is_fallen else 'No'}")
 
-        elif choice == "2":
-            level = input("Enter the level number: ").strip()
-            color = input("Enter the color (y, b, g): ").strip()
-            wait_seconds = input(
-                "Enter the wait time in seconds (default is 0.5): ").strip()
-            if wait_seconds:
-                wait_seconds = float(wait_seconds)
+            elif choice == "3":
+                timescale = input("Enter the timescale value (e.g., 1.5): ").strip()
+                print(f"Setting timescale to {timescale}...")
+                env.set_timescale(timescale)
+                print("Timescale set.")
+
+            elif choice == "4":
+                static_friction = input("Enter the static friction value: ").strip()
+                print(f"Setting static friction to {static_friction}...")
+                env.set_static_friction(static_friction)
+                print("Static friction set.")
+
+            elif choice == "5":
+                dynamic_friction = input(
+                    "Enter the dynamic friction value: ").strip()
+                print(f"Setting dynamic friction to {dynamic_friction}...")
+                env.set_dynamic_friction(dynamic_friction)
+                print("Dynamic friction set.")
+
+            elif choice == "6":
+                width = input("Enter the screenshot resolution width: ").strip()
+                if width.isdigit():
+                    width = int(width)
+                    print(f"Setting screenshot resolution width to {width}...")
+                    env.set_screenshot_res(width)
+                    print("Screenshot resolution set.")
+                else:
+                    print("Invalid width value.")
+
+            elif choice == "7":
+                print("Exiting...")
+                break
+
             else:
-                wait_seconds = 0.5
-            action = (level, color)
-            print(
-                f"Performing action: remove piece at level {level}, color {color}...")
-            screenshot, is_fallen = env.step(action, wait_seconds)
-            print(f"Action performed. Screenshot saved at: {screenshot}")
-            print(f"Has the tower fallen? {'Yes' if is_fallen else 'No'}")
-
-        elif choice == "3":
-            timescale = input("Enter the timescale value (e.g., 1.5): ").strip()
-            print(f"Setting timescale to {timescale}...")
-            env.set_timescale(timescale)
-            print("Timescale set.")
-
-        elif choice == "4":
-            static_friction = input("Enter the static friction value: ").strip()
-            print(f"Setting static friction to {static_friction}...")
-            env.set_static_friction(static_friction)
-            print("Static friction set.")
-
-        elif choice == "5":
-            dynamic_friction = input(
-                "Enter the dynamic friction value: ").strip()
-            print(f"Setting dynamic friction to {dynamic_friction}...")
-            env.set_dynamic_friction(dynamic_friction)
-            print("Dynamic friction set.")
-
-        elif choice == "6":
-            width = input("Enter the screenshot resolution width: ").strip()
-            if width.isdigit():
-                width = int(width)
-                print(f"Setting screenshot resolution width to {width}...")
-                env.set_screenshot_res(width)
-                print("Screenshot resolution set.")
-            else:
-                print("Invalid width value.")
-
-        elif choice == "7":
-            print("Exiting...")
-            break
-
-        else:
-            print("Invalid choice, please try again.")
-
+                print("Invalid choice, please try again.")
 
 if __name__ == "__main__":
     main()
