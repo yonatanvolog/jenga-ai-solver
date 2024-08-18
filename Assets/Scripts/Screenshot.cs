@@ -6,6 +6,7 @@ public class Screenshot : MonoBehaviour
     public Camera screenshotCamera; // Assign the camera from which you want to capture the screenshot in the Inspector
     public int resolutionWidth = 128;  // Set the initial width of the screenshot in the Inspector
     public int resolutionHeight = 72;  // Set the initial height of the screenshot in the Inspector
+    private string folderPath = "../screenshots/"; // The path of your project folder
 
     private void Update()
     {
@@ -34,9 +35,7 @@ public class Screenshot : MonoBehaviour
 
         // Clear the screenshots folder before taking a new screenshot
         ClearScreenshotsFolder();
-
-        string folderPath = "Assets/Screenshots/"; // The path of your project folder
-
+        
         if (!Directory.Exists(folderPath)) // If this path does not exist yet
         {
             Directory.CreateDirectory(folderPath); // It will get created
@@ -83,8 +82,6 @@ public class Screenshot : MonoBehaviour
 
     public void ClearScreenshotsFolder()
     {
-        string folderPath = "Assets/Screenshots/";
-
         if (Directory.Exists(folderPath))
         {
             string[] files = Directory.GetFiles(folderPath);
