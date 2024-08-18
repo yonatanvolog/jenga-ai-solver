@@ -1274,16 +1274,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   target: {fileID: 1712188097}
   rotationSpeed: 5
-  distanceFromTarget: 15
-  minYPosition: -7
-  maxYPosition: 27
-  startingYPosition: 0
-  rotationXatBottom: -15
-  rotationXatTop: 15
+  distanceFromTarget: 20
+  minYPosition: -15
+  maxYPosition: 35
+  rotationXatBottom: -65
+  rotationXatTop: 65
   scrollSpeed: 5
   minDistance: 8
-  maxDistance: 18
+  maxDistance: 20
   zoomDampening: 0.1
+  startPosition: {x: 19.39106, y: 11.1415, z: -13.93424}
+  startRotation: {x: 3.186, y: -45, z: 0}
 --- !u!1001 &981898265
 PrefabInstance:
   m_ObjectHideFlags: 0

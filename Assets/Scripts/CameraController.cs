@@ -4,29 +4,37 @@ public class CameraController : MonoBehaviour
 {
     public Transform target; // The object to rotate around
     public float rotationSpeed = 5.0f;
-    public float distanceFromTarget = 10.0f;
     public float minYPosition = 1.0f;
     public float maxYPosition = 10.0f;
-    public float startingYPosition = 5.0f;
-    public float rotationXatBottom = 30.0f;
-    public float rotationXatTop = -30.0f;
     public float scrollSpeed = 2.0f;
     public float minDistance = 5.0f;
     public float maxDistance = 15.0f;
     public float zoomDampening = 0.1f;
 
-    private float currentY = 0.0f;
+    public Vector3 startPosition = new Vector3(0, 5.0f, 0); // Set the initial position
+    public Vector3 startRotation = new Vector3(0, 0, 0); // Set the initial rotation
+
+    private float currentY;
     private float currentYPosition;
     private float targetDistance;
     private float currentDistance;
 
     void Start()
     {
-        // Initialize camera position and distance
-        currentYPosition = Mathf.Clamp(startingYPosition, minYPosition, maxYPosition);
-        targetDistance = distanceFromTarget;
-        currentDistance = distanceFromTarget;
-        UpdateCameraPosition();
+        // Initialize current positions and distances based on start values
+        currentYPosition = Mathf.Clamp(startPosition.y, minYPosition, maxYPosition);
+        targetDistance = Vector3.Distance(target.position, startPosition);
+        currentDistance = targetDistance;
+
+        // Set the initial rotation angles
+        currentY = startRotation.y;
+
+        // Apply the initial position and rotation
+        transform.position = startPosition;
+        transform.rotation = Quaternion.Euler(startRotation);
+
+        // Ensure the camera is looking at the target initially
+        transform.LookAt(target);
     }
 
     void Update()
@@ -63,21 +71,14 @@ public class CameraController : MonoBehaviour
 
     void UpdateCameraPosition()
     {
-        // Calculate X rotation based on current Y position with exponential curve
-        float t = (currentYPosition - minYPosition) / (maxYPosition - minYPosition);
-        t = Mathf.Pow(t, 2.5f); // Exponential adjustment, higher exponent for more curve
-        float xRotation = Mathf.Lerp(rotationXatBottom, rotationXatTop, t);
-        
-        // Adjust xRotation to be 0 at startingYPosition
-        if (currentYPosition == startingYPosition)
-        {
-            xRotation = 0;
-        }
-
-        // Calculate the direction to the target
+        // Calculate the direction from the target to the camera
         Vector3 direction = new Vector3(0, 0, -currentDistance);
-        Quaternion rotation = Quaternion.Euler(xRotation, currentY, 0);
+
+        // Apply rotation based on currentY
+        Quaternion rotation = Quaternion.Euler(startRotation.x, currentY, 0);
         Vector3 position = target.position + rotation * direction;
+
+        // Apply vertical position adjustment based on currentYPosition
         position.y = currentYPosition;
 
         // Apply the calculated rotation and position
