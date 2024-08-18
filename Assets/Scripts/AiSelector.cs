@@ -99,7 +99,17 @@ public class AiSelector : MonoBehaviour
             return;
         }
 
-        JengaLevel levelList = jengaTowerLevels[aiPlayer.levelSelect];
+        // Reverse the level selection
+        int reversedLevelIndex = jengaTowerLevels.Count - 1 - aiPlayer.levelSelect;
+
+        if (reversedLevelIndex < 0 || reversedLevelIndex >= jengaTowerLevels.Count)
+        {
+            //Debug.LogError("Invalid reversed level index.");
+            return;
+        }
+
+        JengaLevel levelList = jengaTowerLevels[reversedLevelIndex];
+
         if (aiPlayer.pieceSelect < AIPlayerAPI.PieceType.Yellow || aiPlayer.pieceSelect > AIPlayerAPI.PieceType.Green)
         {
             //Debug.LogError("Invalid pieceSelect value.");
@@ -126,6 +136,7 @@ public class AiSelector : MonoBehaviour
         HandlePieceMoveQuick(pieceTransform);
         StartCoroutine(TakeScreenshotAfterFrame());
     }
+
 
     private IEnumerator TakeScreenshotAfterFrame()
     {
