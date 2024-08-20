@@ -1,7 +1,6 @@
 using System.Linq;
 using UnityEngine;
 using System.Collections;
-using Unity.VisualScripting;
 
 public class GameManager : MonoBehaviour
 {
@@ -48,7 +47,7 @@ public class GameManager : MonoBehaviour
                 var fallDetector = detector.GetComponent<FallDetector>();
                 if (fallDetector != null)
                 {
-                    fallDetector.OnTowerFall += HandleTowerFall;
+                    fallDetector.OnTowerFall += () => HandleTowerFall(fallDetector);
                 }
             }
         }
@@ -88,9 +87,16 @@ public class GameManager : MonoBehaviour
         isPlayerTurn = false; // End the current player's turn
     }
 
-    private void HandleTowerFall()
+    private void HandleTowerFall(FallDetector fallDetector)
     {
-        // Restart the game when the tower falls
+        // Enable the MeshRenderer of the fall detector
+        MeshRenderer meshRenderer = fallDetector.GetComponent<MeshRenderer>();
+        if (meshRenderer != null)
+        {
+            meshRenderer.enabled = true;
+        }
+
+        // Mark the tower as fallen and handle the event
         Debug.Log("The tower has fallen! Restarting the game...");
         isTowerFallen = true;
         //gameManager.RestartGame();
