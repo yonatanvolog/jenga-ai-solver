@@ -11,6 +11,7 @@ public class CommandHandler : MonoBehaviour
         SetStaticFriction,
         SetDynamicFriction,
         SetScreenshotRes,
+        IsFallen,
         Unknown
     }
 
@@ -68,6 +69,9 @@ public class CommandHandler : MonoBehaviour
             case CommandType.SetScreenshotRes:
                 HandleSetScreenshotRes(data);
                 break;
+            case CommandType.IsFallen:
+                response = HandleIsFallenCommand();
+                break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
                 response = "Unknown command";
@@ -102,6 +106,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.StartsWith("set_screenshot_res"))
         {
             return CommandType.SetScreenshotRes;
+        }
+        else if (data.Equals("isfallen"))
+        {
+            return CommandType.IsFallen;
         }
         else
         {
@@ -210,5 +218,11 @@ public class CommandHandler : MonoBehaviour
         {
             Debug.LogError("Invalid screenshot width value received.");
         }
+    }
+
+    private string HandleIsFallenCommand()
+    {
+        bool hasFallen = gameManager != null && gameManager.IsTowerFallen();
+        return hasFallen.ToString().ToLower();
     }
 }
