@@ -12,6 +12,7 @@ public class CommandHandler : MonoBehaviour
         SetDynamicFriction,
         SetScreenshotRes,
         IsFallen,
+        SetFallDetectDistance,
         Unknown
     }
 
@@ -19,6 +20,7 @@ public class CommandHandler : MonoBehaviour
     public PhysicMaterial jengaPhysicsMaterial;  // Assign this in the Inspector or via script
     private GameManager gameManager;
     private Screenshot screenshot;  // Field to store the Screenshot component
+    private FallDetectModifier fallDetectModifier; // Field to store the FallDetectModifier component
     private SynchronizationContext mainThreadContext;
 
     void Start()
@@ -38,6 +40,12 @@ public class CommandHandler : MonoBehaviour
         if (screenshot == null)
         {
             Debug.LogError("Screenshot component not found in the scene.");
+        }
+
+        fallDetectModifier = GameObject.FindObjectOfType<FallDetectModifier>();
+        if (fallDetectModifier == null)
+        {
+            Debug.LogError("FallDetectModifier component not found in the scene.");
         }
 
         // Capture the synchronization context of the main thread
@@ -71,6 +79,9 @@ public class CommandHandler : MonoBehaviour
                 break;
             case CommandType.IsFallen:
                 response = HandleIsFallenCommand();
+                break;
+            case CommandType.SetFallDetectDistance:
+                HandleSetFallDetectDistance(data);
                 break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
@@ -110,6 +121,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.Equals("isfallen"))
         {
             return CommandType.IsFallen;
+        }
+        else if (data.StartsWith("set_fall_detect_distance"))
+        {
+            return CommandType.SetFallDetectDistance;
         }
         else
         {
@@ -224,5 +239,21 @@ public class CommandHandler : MonoBehaviour
     {
         bool hasFallen = gameManager != null && gameManager.IsTowerFallen();
         return hasFallen.ToString().ToLower();
+    }
+
+    private void HandleSetFallDetectDistance(string data)
+    {
+        string[] parts = data.Split(' ');
+        if (parts.Length == 2 && float.TryParse(parts[1], out float value))
+        {
+            Debug.Log($"Setting fall detect distance to {value}");
+
+            // Post the distance change to the main thread
+            mainThreadContext.Post(_ => fallDetectModifier.SetDistance(value), null);
+        }
+        else
+        {
+            Debug.LogError("Invalid distance value received.");
+        }
     }
 }
