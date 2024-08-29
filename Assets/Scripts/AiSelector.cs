@@ -60,35 +60,90 @@ public class AiSelector : MonoBehaviour
 
     private void ParseJengaTower()
     {
+        // Ensure the list is properly cleared
+        jengaTowerLevels.Clear();
+    }
+
+    private void ParseJengaTower111()
+    {
+        // Ensure the list is properly cleared
         jengaTowerLevels.Clear();
 
         if (jengaTower == null)
         {
-            //Debug.LogError("Jenga tower not assigned.");
+            Debug.LogError("Jenga tower not assigned.");
             return;
         }
 
+        // Iterate over the levels in the Jenga tower
         foreach (Transform level in jengaTower.transform)
         {
             JengaLevel jengaLevel = new JengaLevel();
+
+            // Iterate over the pieces in the current level
             foreach (Transform piece in level)
             {
-                jengaLevel.pieces.Add(piece);
+                // Check if the piece is still active and not destroyed
+                if (piece != null && piece.gameObject != null && piece.gameObject.activeInHierarchy)
+                {
+                    jengaLevel.pieces.Add(piece);
+                }
             }
-            jengaTowerLevels.Add(jengaLevel);
+
+            // Only add levels that contain active pieces
+            if (jengaLevel.pieces.Count > 0)
+            {
+                jengaTowerLevels.Add(jengaLevel);
+            }
         }
 
         // Print the structure for debugging
-        //Debug.Log("Jenga Tower Structure:");
+        Debug.Log("Jenga Tower Structure:");
         for (int i = 0; i < jengaTowerLevels.Count; i++)
         {
-            //Debug.Log($"Level {i}:");
+            Debug.Log($"Level {i}:");
             foreach (var piece in jengaTowerLevels[i].pieces)
             {
-                //Debug.Log($"  Piece: {piece.name}");
+                Debug.Log($"  Piece: {piece.name}");
             }
         }
     }
+
+
+
+    /// <summary>
+    /// Get the number of blocks in a specific level of the Jenga tower.
+    /// This method receives a level (0 is the top) and returns a value from 0 to 3.
+    /// The selection is reversed, similar to the PerformMove method.
+    /// </summary>
+    public int GetNumOfBlocksInLevel(int level)
+    {
+        if (level < 0 || level >= jengaTowerLevels.Count)
+        {
+            Debug.LogError("Invalid level index.");
+            return 0;
+        }
+
+        // Print the number of blocks in all levels
+        for (int i = 0; i < jengaTowerLevels.Count; i++)
+        {
+            int reversedIndex = jengaTowerLevels.Count - 1 - i;
+            int numBlocks = jengaTowerLevels[reversedIndex].pieces.Count;
+            Debug.Log($"Level {i} (Reversed Index {reversedIndex}): {numBlocks} blocks");
+        }
+
+        // Reverse the level selection
+        int reversedLevelIndex = jengaTowerLevels.Count - 1 - level;
+
+        if (reversedLevelIndex < 0 || reversedLevelIndex >= jengaTowerLevels.Count)
+        {
+            Debug.LogError("Invalid reversed level index.");
+            return 0;
+        }
+
+        return jengaTowerLevels[reversedLevelIndex].pieces.Count;
+    }
+
 
     private void PerformMove()
     {
@@ -136,7 +191,6 @@ public class AiSelector : MonoBehaviour
         HandlePieceMoveQuick(pieceTransform);
         StartCoroutine(TakeScreenshotAfterFrame());
     }
-
 
     private IEnumerator TakeScreenshotAfterFrame()
     {

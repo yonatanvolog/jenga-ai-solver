@@ -13,6 +13,7 @@ public class CommandHandler : MonoBehaviour
         SetScreenshotRes,
         IsFallen,
         SetFallDetectDistance,
+        GetNumOfBlocksInLevel,
         Unknown
     }
 
@@ -21,6 +22,7 @@ public class CommandHandler : MonoBehaviour
     private GameManager gameManager;
     private Screenshot screenshot;  // Field to store the Screenshot component
     private FallDetectModifier fallDetectModifier; // Field to store the FallDetectModifier component
+    private AiSelector aiSelector; // Field to store the AiSelector component
     private SynchronizationContext mainThreadContext;
 
     void Start()
@@ -46,6 +48,12 @@ public class CommandHandler : MonoBehaviour
         if (fallDetectModifier == null)
         {
             Debug.LogError("FallDetectModifier component not found in the scene.");
+        }
+
+        aiSelector = GameObject.FindObjectOfType<AiSelector>();
+        if (aiSelector == null)
+        {
+            Debug.LogError("AiSelector component not found in the scene.");
         }
 
         // Capture the synchronization context of the main thread
@@ -82,6 +90,9 @@ public class CommandHandler : MonoBehaviour
                 break;
             case CommandType.SetFallDetectDistance:
                 HandleSetFallDetectDistance(data);
+                break;
+            case CommandType.GetNumOfBlocksInLevel:
+                response = HandleGetNumOfBlocksInLevel(data);
                 break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
@@ -125,6 +136,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.StartsWith("set_fall_detect_distance"))
         {
             return CommandType.SetFallDetectDistance;
+        }
+        else if (data.StartsWith("get_num_of_blocks_in_level"))
+        {
+            return CommandType.GetNumOfBlocksInLevel;
         }
         else
         {
@@ -254,6 +269,22 @@ public class CommandHandler : MonoBehaviour
         else
         {
             Debug.LogError("Invalid distance value received.");
+        }
+    }
+
+    private string HandleGetNumOfBlocksInLevel(string data)
+    {
+        string[] parts = data.Split(' ');
+        if (parts.Length == 2 && int.TryParse(parts[1], out int level))
+        {
+            int numOfBlocks = aiSelector != null ? aiSelector.GetNumOfBlocksInLevel(level) : 0;
+            Debug.Log($"Number of blocks in level {level}: {numOfBlocks}");
+            return numOfBlocks.ToString();
+        }
+        else
+        {
+            Debug.LogError("Invalid level value received.");
+            return "Invalid level value";
         }
     }
 }
