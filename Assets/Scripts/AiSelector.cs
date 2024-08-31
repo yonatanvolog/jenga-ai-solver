@@ -57,22 +57,25 @@ public class AiSelector : MonoBehaviour
     {
         return pieceSelected;
     }
-
+    
     private void ParseJengaTower()
     {
-        // Ensure the list is properly cleared
-        jengaTowerLevels.Clear();
+        // Start the coroutine that introduces the delay before parsing the tower
+        StartCoroutine(ParseJengaTowerWithDelay());
     }
 
-    private void ParseJengaTower111()
+    private IEnumerator ParseJengaTowerWithDelay()
     {
-        // Ensure the list is properly cleared
+        // Wait until the next physics update
+        yield return new WaitForFixedUpdate();
+
+        // Clear the existing list to ensure it's up-to-date
         jengaTowerLevels.Clear();
 
         if (jengaTower == null)
         {
             Debug.LogError("Jenga tower not assigned.");
-            return;
+            yield break;
         }
 
         // Iterate over the levels in the Jenga tower
@@ -83,8 +86,8 @@ public class AiSelector : MonoBehaviour
             // Iterate over the pieces in the current level
             foreach (Transform piece in level)
             {
-                // Check if the piece is still active and not destroyed
-                if (piece != null && piece.gameObject != null && piece.gameObject.activeInHierarchy)
+                // Check if the piece is active in the hierarchy, meaning it hasn't been removed
+                if (piece.gameObject.activeInHierarchy)
                 {
                     jengaLevel.pieces.Add(piece);
                 }
@@ -97,8 +100,8 @@ public class AiSelector : MonoBehaviour
             }
         }
 
-        // Print the structure for debugging
-        Debug.Log("Jenga Tower Structure:");
+        // Debugging: Print the updated structure of the Jenga tower
+        Debug.Log("Updated Jenga Tower Structure:");
         for (int i = 0; i < jengaTowerLevels.Count; i++)
         {
             Debug.Log($"Level {i}:");
@@ -108,8 +111,6 @@ public class AiSelector : MonoBehaviour
             }
         }
     }
-
-
 
     /// <summary>
     /// Get the number of blocks in a specific level of the Jenga tower.
