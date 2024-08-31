@@ -332,6 +332,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 2127037711}
     m_Modifications:
+    - target: {fileID: 1221258192449651935, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 1616234842719145481, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -371,6 +375,10 @@ PrefabInstance:
     - target: {fileID: 1616234842719145481, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2297102572120073203, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3872546991083216548, guid: cada08f94d2ea6c428487ae1f3607bea, type: 3}
       propertyPath: m_Name
@@ -900,6 +908,7 @@ MonoBehaviour:
   delayEnabled: 0
   aiPlayer: {fileID: 13858294}
   jengaTower: {fileID: 2127037710}
+  jengaTowerLevels: []
 --- !u!4 &338126283
 Transform:
   m_ObjectHideFlags: 0

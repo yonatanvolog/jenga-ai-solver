@@ -14,6 +14,7 @@ public class CommandHandler : MonoBehaviour
         IsFallen,
         SetFallDetectDistance,
         GetNumOfBlocksInLevel,
+        GetAverageMaxTiltAngle,  // Add this to handle the new command
         Unknown
     }
 
@@ -92,7 +93,10 @@ public class CommandHandler : MonoBehaviour
                 HandleSetFallDetectDistance(data);
                 break;
             case CommandType.GetNumOfBlocksInLevel:
-                response = HandleGetNumOfBlocksInLevel(data);
+                mainThreadContext.Send(_ => response = HandleGetNumOfBlocksInLevel(data), null);
+                break;
+            case CommandType.GetAverageMaxTiltAngle:
+                mainThreadContext.Send(_ => response = HandleGetAverageMaxTiltAngle(), null);
                 break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
@@ -140,6 +144,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.StartsWith("get_num_of_blocks_in_level"))
         {
             return CommandType.GetNumOfBlocksInLevel;
+        }
+        else if (data.StartsWith("get_average_max_tilt_angle"))
+        {
+            return CommandType.GetAverageMaxTiltAngle;
         }
         else
         {
@@ -286,5 +294,12 @@ public class CommandHandler : MonoBehaviour
             Debug.LogError("Invalid level value received.");
             return "Invalid level value";
         }
+    }
+
+    private string HandleGetAverageMaxTiltAngle()
+    {
+        float averageTiltAngle = aiSelector != null ? aiSelector.GetAverageOfMaxAngles() : 0f;
+        Debug.Log($"Average max tilt angle: {averageTiltAngle}");
+        return averageTiltAngle.ToString();
     }
 }
