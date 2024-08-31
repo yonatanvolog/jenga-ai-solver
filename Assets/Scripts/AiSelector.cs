@@ -256,8 +256,11 @@ public class AiSelector : MonoBehaviour
                 if (piece != null)
                 {
                     // Initialize the dictionary with current tilt angles (absolute values)
-                    float initialTiltAngle = Mathf.Max(Mathf.Abs(piece.eulerAngles.x), Mathf.Abs(piece.eulerAngles.z));
-                    pieceMaxTiltAngles[piece] = initialTiltAngle;
+                    float rollAngle = Mathf.DeltaAngle(0, piece.eulerAngles.x);
+                    float pitchAngle = Mathf.DeltaAngle(0, piece.eulerAngles.z);
+                    float currentTiltAngle = Mathf.Max(Mathf.Abs(rollAngle), Mathf.Abs(pitchAngle));
+
+                    pieceMaxTiltAngles[piece] = currentTiltAngle;
                 }
             }
         }
@@ -284,14 +287,26 @@ public class AiSelector : MonoBehaviour
     void FixedUpdate()
     {
         // Update the maximum tilt angles for all pieces in the tower
+        UpdateMaxTiltAnglesForAllPieces();
+    }
+
+    private void UpdateMaxTiltAnglesForAllPieces()
+    {
         foreach (var level in jengaTowerLevels)
         {
             foreach (var piece in level.pieces)
             {
                 if (piece != null && pieceMaxTiltAngles.ContainsKey(piece))
                 {
-                    float currentTiltAngle = Mathf.Max(Mathf.Abs(piece.eulerAngles.x), Mathf.Abs(piece.eulerAngles.z));
-                    print("tilt angle: " + currentTiltAngle);
+                    // Calculate the absolute tilt angles relative to 0 degrees
+                    float rollAngle = Mathf.DeltaAngle(0, piece.eulerAngles.x);
+                    float pitchAngle = Mathf.DeltaAngle(0, piece.eulerAngles.z);
+                    float currentTiltAngle = Mathf.Max(Mathf.Abs(rollAngle), Mathf.Abs(pitchAngle));
+
+                    // Print the current tilt angle for debugging
+                    //Debug.Log($"Current tilt angle for {piece.name}: {currentTiltAngle}");
+
+                    // Update the maximum tilt angle if the current one is greater
                     pieceMaxTiltAngles[piece] = Mathf.Max(pieceMaxTiltAngles[piece], currentTiltAngle);
                 }
             }
