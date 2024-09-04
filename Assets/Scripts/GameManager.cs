@@ -123,4 +123,9 @@ public class GameManager : MonoBehaviour
         // Reload the current scene
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
+
+    public void ResetIsTowerFallen()
+    {
+        isTowerFallen = false;
+    }
 }

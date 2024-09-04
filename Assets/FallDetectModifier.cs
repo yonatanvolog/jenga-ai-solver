@@ -191,4 +191,16 @@ public class FallDetectModifier : MonoBehaviour
             bottomMeshRenderer.enabled = isEnabled;
         }
     }
+
+    public void ResetFallDetectors()
+    {
+        foreach (Transform child in transform)
+        {
+            MeshRenderer renderer = child.GetComponent<MeshRenderer>();
+            if (renderer != null)
+            {
+                renderer.enabled = false;
+            }
+        }
+    }
 }
