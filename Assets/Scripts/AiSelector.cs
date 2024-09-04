@@ -18,6 +18,10 @@ public class AiSelector : MonoBehaviour
 
     // Reference to the Jenga tower object
     public GameObject jengaTower;
+    public GameObject prevJengaTower; // Field to store the previous Jenga tower state
+
+    public float prevAverageOfMaxAngles = 0f; // Field to store the previous average of max tilt angles
+    public bool lastActionWasRevert = false; // Flag to check if the last action was a revert
 
     // Array of Jenga levels to see in the Inspector
     [System.Serializable]
@@ -35,6 +39,14 @@ public class AiSelector : MonoBehaviour
     // Reference to the Screenshot component
     private Screenshot screenshot;
 
+    // Reference to the GameManager
+    private GameManager gameManager;    
+    private FallDetectModifier fallDetectModifier;
+
+
+    // Counter for instantiated Jenga towers
+    private int towerInstanceCounter = 0;
+
     void Start()
     {
         // Find the Screenshot object in the scene
@@ -43,6 +55,15 @@ public class AiSelector : MonoBehaviour
         if (screenshot == null)
         {
             Debug.LogError("Screenshot component not found in the scene.");
+        }
+        fallDetectModifier = FindObjectOfType<FallDetectModifier>();
+
+        // Find the GameManager object in the scene
+        gameManager = FindObjectOfType<GameManager>();
+
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager component not found in the scene.");
         }
 
         ParseJengaTower();
@@ -90,13 +111,29 @@ public class AiSelector : MonoBehaviour
         {
             JengaLevel jengaLevel = new JengaLevel();
 
-            int pieceIndex = 0;
+            // Initialize all pieces to null
+            for (int i = 0; i < 3; i++)
+            {
+                jengaLevel.pieces[i] = null;
+            }
+
             // Iterate over the pieces in the current level
             foreach (Transform piece in level)
             {
-                // Set the piece in the calculated index
-                jengaLevel.pieces[pieceIndex] = piece;
-                pieceIndex++;
+                // Check the first character of the piece name and assign it to the corresponding index
+                string pieceName = piece.name;
+                if (pieceName.StartsWith("0"))
+                {
+                    jengaLevel.pieces[0] = piece;
+                }
+                else if (pieceName.StartsWith("1"))
+                {
+                    jengaLevel.pieces[1] = piece;
+                }
+                else if (pieceName.StartsWith("2"))
+                {
+                    jengaLevel.pieces[2] = piece;
+                }
             }
 
             // Add the level to the array
@@ -104,6 +141,8 @@ public class AiSelector : MonoBehaviour
             levelIndex++;
         }
     }
+
+
 
     /// <summary>
     /// Get the number of blocks in a specific level of the Jenga tower.
@@ -187,8 +226,36 @@ public class AiSelector : MonoBehaviour
 
         // Perform the move (e.g., change material and destroy the piece)
         pieceSelected = true;
-        HandlePieceMoveQuick(pieceTransform);
         StartCoroutine(TakeScreenshotAfterFrame());
+        // Save the current state before performing the move
+        SaveCurrentState();
+        HandlePieceMoveQuick(pieceTransform);
+    }
+
+    private void SaveCurrentState()
+    {
+        // Disable the current Jenga tower
+        jengaTower.SetActive(false);
+
+        if (prevJengaTower != null && prevJengaTower != jengaTower)
+        {
+            Destroy(prevJengaTower);
+        }
+
+        // Create a copy of the Jenga tower and store the reference
+        prevJengaTower = Instantiate(jengaTower);
+        towerInstanceCounter++; // Increment the counter
+        prevJengaTower.name = jengaTower.name + "_" + towerInstanceCounter; // Set the name with index
+        prevJengaTower.SetActive(false);
+
+        // Enable the original Jenga tower back
+        jengaTower.SetActive(true);
+
+        // Save the current average tilt angle
+        prevAverageOfMaxAngles = GetAverageOfMaxAngles();
+
+        // Set the last action flag to false since this is not a revert step
+        lastActionWasRevert = false;
     }
 
     private IEnumerator TakeScreenshotAfterFrame()
@@ -241,7 +308,45 @@ public class AiSelector : MonoBehaviour
             }
         }
     }
-    
+
+    public void RevertStep()
+    {
+        if (prevJengaTower != null)
+        {
+            // Replace the current Jenga tower with the previous one
+            Destroy(jengaTower);
+            print("Tower Destroyed");
+            jengaTower = prevJengaTower;
+            jengaTower.SetActive(true);
+            // Update the internal representation of the Jenga tower
+            ParseJengaTower();
+
+            // Take an updated screenshot
+            StartCoroutine(TakeScreenshotAfterFrame());
+
+            // Reset the cubes' starting angles
+            ResetCubesStartingAngles();
+
+            // Set the last action flag to true
+            lastActionWasRevert = true;
+            
+            // Call ResetIsTowerFallen from GameManager
+            if (gameManager != null)
+            {
+                gameManager.ResetIsTowerFallen();
+            }
+            
+            if (fallDetectModifier != null)
+            {
+                fallDetectModifier.ResetFallDetectors();
+            }
+        }
+        else
+        {
+            Debug.LogWarning("No previous state to revert to.");
+        }
+    }
+
     /// <summary>
     /// Reset the maximum tilt angles for all cubes in the tower.
     /// </summary>
@@ -272,6 +377,12 @@ public class AiSelector : MonoBehaviour
     /// <returns>Average of maximum tilt angles</returns>
     public float GetAverageOfMaxAngles()
     {
+        if (lastActionWasRevert)
+        {
+            // If the last action was a revert, return the saved average
+            return prevAverageOfMaxAngles;
+        }
+
         if (pieceMaxTiltAngles.Count == 0) return 0f;
 
         float totalMaxAngle = 0f;
@@ -302,9 +413,6 @@ public class AiSelector : MonoBehaviour
                     float rollAngle = Mathf.DeltaAngle(0, piece.eulerAngles.x);
                     float pitchAngle = Mathf.DeltaAngle(0, piece.eulerAngles.z);
                     float currentTiltAngle = Mathf.Max(Mathf.Abs(rollAngle), Mathf.Abs(pitchAngle));
-
-                    // Print the current tilt angle for debugging
-                    //Debug.Log($"Current tilt angle for {piece.name}: {currentTiltAngle}");
 
                     // Update the maximum tilt angle if the current one is greater
                     pieceMaxTiltAngles[piece] = Mathf.Max(pieceMaxTiltAngles[piece], currentTiltAngle);

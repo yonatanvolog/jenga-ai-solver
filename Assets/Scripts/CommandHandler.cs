@@ -14,7 +14,8 @@ public class CommandHandler : MonoBehaviour
         IsFallen,
         SetFallDetectDistance,
         GetNumOfBlocksInLevel,
-        GetAverageMaxTiltAngle,  // Add this to handle the new command
+        GetAverageMaxTiltAngle,
+        RevertStep, // Added new command
         Unknown
     }
 
@@ -98,6 +99,9 @@ public class CommandHandler : MonoBehaviour
             case CommandType.GetAverageMaxTiltAngle:
                 mainThreadContext.Send(_ => response = HandleGetAverageMaxTiltAngle(), null);
                 break;
+            case CommandType.RevertStep:
+                mainThreadContext.Send(_ => response = HandleRevertStep(), null); // Handle revert step command
+                break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
                 response = "Unknown command";
@@ -148,6 +152,10 @@ public class CommandHandler : MonoBehaviour
         else if (data.StartsWith("get_average_max_tilt_angle"))
         {
             return CommandType.GetAverageMaxTiltAngle;
+        }
+        else if (data.StartsWith("revert_step"))
+        {
+            return CommandType.RevertStep; // Parse the revert step command
         }
         else
         {
@@ -301,5 +309,18 @@ public class CommandHandler : MonoBehaviour
         float averageTiltAngle = aiSelector != null ? aiSelector.GetAverageOfMaxAngles() : 0f;
         Debug.Log($"Average max tilt angle: {averageTiltAngle}");
         return averageTiltAngle.ToString();
+    }
+
+    private string HandleRevertStep() // Implement the revert step handling
+    {
+        if (aiSelector != null)
+        {
+            aiSelector.RevertStep();
+            return "Step reverted.";
+        }
+        else
+        {
+            return "AiSelector component not found.";
+        }
     }
 }
