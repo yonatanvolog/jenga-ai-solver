@@ -18,12 +18,22 @@ public class CameraController : MonoBehaviour
     private float currentYPosition;
     private float targetDistance;
     private float currentDistance;
+    
+    private Vector3 targetPositionCopy;
+    private Quaternion targetRotationCopy;
 
     void Start()
     {
+        // Create deep copies of the target's position and rotation
+        if (target != null)
+        {
+            targetPositionCopy = target.position;
+            targetRotationCopy = target.rotation;
+        }
+
         // Initialize current positions and distances based on start values
         currentYPosition = Mathf.Clamp(startPosition.y, minYPosition, maxYPosition);
-        targetDistance = Vector3.Distance(target.position, startPosition);
+        targetDistance = Vector3.Distance(targetPositionCopy, startPosition);
         currentDistance = targetDistance;
 
         // Set the initial rotation angles
@@ -34,7 +44,7 @@ public class CameraController : MonoBehaviour
         transform.rotation = Quaternion.Euler(startRotation);
 
         // Ensure the camera is looking at the target initially
-        transform.LookAt(target);
+        transform.LookAt(targetPositionCopy);
     }
 
     void Update()
@@ -76,13 +86,13 @@ public class CameraController : MonoBehaviour
 
         // Apply rotation based on currentY
         Quaternion rotation = Quaternion.Euler(startRotation.x, currentY, 0);
-        Vector3 position = target.position + rotation * direction;
+        Vector3 position = targetPositionCopy + rotation * direction;
 
         // Apply vertical position adjustment based on currentYPosition
         position.y = currentYPosition;
 
         // Apply the calculated rotation and position
         transform.position = position;
-        transform.LookAt(target);
+        transform.LookAt(targetPositionCopy);
     }
 }
