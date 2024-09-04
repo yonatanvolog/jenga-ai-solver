@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.IO;
 
@@ -6,7 +7,12 @@ public class Screenshot : MonoBehaviour
     public Camera screenshotCamera; // Assign the camera from which you want to capture the screenshot in the Inspector
     public int resolutionWidth = 128;  // Set the initial width of the screenshot in the Inspector
     public int resolutionHeight = 72;  // Set the initial height of the screenshot in the Inspector
-    private string folderPath = "../screenshots/"; // The path of your project folder
+    private string folderPath = "./screenshots/"; // The path of your project folder
+
+    private void Start()
+    {
+        TakeScreenshot();
+    }
 
     private void Update()
     {
