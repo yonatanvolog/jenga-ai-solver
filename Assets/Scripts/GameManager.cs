@@ -62,7 +62,11 @@ public class GameManager : MonoBehaviour
 
         currentPlayerIndex = playerIndex;
         isPlayerTurn = true;
-        players[currentPlayerIndex].StartTurn(); // Notify the player to start their turn
+        //TODO: remove if condition when finished development of game
+        if (humanPlayers.Length > 0 || aiPlayers.Length > 0)
+        {
+            players[currentPlayerIndex].StartTurn(); // Notify the player to start their turn
+        }
 
         StartCoroutine(WaitForPlayerTurn());
     }
