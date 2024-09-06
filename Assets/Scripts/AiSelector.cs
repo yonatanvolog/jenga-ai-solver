@@ -47,6 +47,10 @@ public class AiSelector : MonoBehaviour
     // Counter for instantiated Jenga towers
     private int towerInstanceCounter = 0;
     
+    // Field to control the frame interval for updates
+    public int updateFrameInterval = 10;
+    private int frameCounter = 0;
+    
     void Start()
     {
         // Find the Screenshot object in the scene
@@ -415,8 +419,13 @@ public class AiSelector : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Update the maximum tilt angles for all pieces in the tower
-        UpdateMaxTiltAnglesForAllPieces();
+        // Update the maximum tilt angles every 'updateFrameInterval' frames
+        if (frameCounter >= updateFrameInterval)
+        {
+            UpdateMaxTiltAnglesForAllPieces();
+            frameCounter = 0; // Reset the counter after updating
+        }
+        frameCounter++;
     }
 
     private void UpdateMaxTiltAnglesForAllPieces()
