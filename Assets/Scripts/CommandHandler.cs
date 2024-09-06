@@ -15,7 +15,8 @@ public class CommandHandler : MonoBehaviour
         SetFallDetectDistance,
         GetNumOfBlocksInLevel,
         GetAverageMaxTiltAngle,
-        RevertStep, // Added new command
+        GetMostMaxTiltAngle, // Added new command for max tilt angle
+        RevertStep, 
         Unknown
     }
 
@@ -99,8 +100,11 @@ public class CommandHandler : MonoBehaviour
             case CommandType.GetAverageMaxTiltAngle:
                 mainThreadContext.Send(_ => response = HandleGetAverageMaxTiltAngle(), null);
                 break;
+            case CommandType.GetMostMaxTiltAngle: // New case for max tilt angle
+                mainThreadContext.Send(_ => response = HandleGetMostMaxTiltAngle(), null);
+                break;
             case CommandType.RevertStep:
-                mainThreadContext.Send(_ => response = HandleRevertStep(), null); // Handle revert step command
+                mainThreadContext.Send(_ => response = HandleRevertStep(), null); 
                 break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
@@ -153,9 +157,13 @@ public class CommandHandler : MonoBehaviour
         {
             return CommandType.GetAverageMaxTiltAngle;
         }
+        else if (data.StartsWith("get_most_max_tilt_angle")) // New parsing for max tilt angle
+        {
+            return CommandType.GetMostMaxTiltAngle;
+        }
         else if (data.StartsWith("revert_step"))
         {
-            return CommandType.RevertStep; // Parse the revert step command
+            return CommandType.RevertStep;
         }
         else
         {
@@ -193,7 +201,6 @@ public class CommandHandler : MonoBehaviour
 
         if (gameManager != null)
         {
-            // Post the RestartGame call to the main thread
             mainThreadContext.Post(_ => gameManager.RestartGame(), null);
         }
         else
@@ -208,8 +215,6 @@ public class CommandHandler : MonoBehaviour
         if (parts.Length == 2 && float.TryParse(parts[1], out float timescale))
         {
             Debug.Log($"Setting timescale to {timescale}");
-
-            // Post the timescale adjustment to the main thread
             mainThreadContext.Post(_ => Time.timeScale = timescale, null);
         }
         else
@@ -224,8 +229,6 @@ public class CommandHandler : MonoBehaviour
         if (parts.Length == 2 && float.TryParse(parts[1], out float staticFriction))
         {
             Debug.Log($"Setting static friction to {staticFriction}");
-
-            // Post the static friction change to the main thread
             mainThreadContext.Post(_ => jengaPhysicsMaterial.staticFriction = staticFriction, null);
         }
         else
@@ -240,8 +243,6 @@ public class CommandHandler : MonoBehaviour
         if (parts.Length == 2 && float.TryParse(parts[1], out float dynamicFriction))
         {
             Debug.Log($"Setting dynamic friction to {dynamicFriction}");
-
-            // Post the dynamic friction change to the main thread
             mainThreadContext.Post(_ => jengaPhysicsMaterial.dynamicFriction = dynamicFriction, null);
         }
         else
@@ -256,8 +257,6 @@ public class CommandHandler : MonoBehaviour
         if (parts.Length == 2 && int.TryParse(parts[1], out int width))
         {
             Debug.Log($"Setting screenshot resolution width to {width}");
-
-            // Set the screenshot resolution width
             mainThreadContext.Post(_ => screenshot.SetFinalWidth(width), null);
         }
         else
@@ -278,8 +277,6 @@ public class CommandHandler : MonoBehaviour
         if (parts.Length == 2 && float.TryParse(parts[1], out float value))
         {
             Debug.Log($"Setting fall detect distance to {value}");
-
-            // Post the distance change to the main thread
             mainThreadContext.Post(_ => fallDetectModifier.SetDistance(value), null);
         }
         else
@@ -311,7 +308,14 @@ public class CommandHandler : MonoBehaviour
         return averageTiltAngle.ToString();
     }
 
-    private string HandleRevertStep() // Implement the revert step handling
+    private string HandleGetMostMaxTiltAngle() // Handler for most max tilt angle
+    {
+        float maxTiltAngle = aiSelector != null ? aiSelector.GetMaxOfMaxAngles() : 0f;
+        Debug.Log($"Most max tilt angle: {maxTiltAngle}");
+        return maxTiltAngle.ToString();
+    }
+
+    private string HandleRevertStep() 
     {
         if (aiSelector != null)
         {

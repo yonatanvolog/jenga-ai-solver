@@ -21,6 +21,8 @@ public class AiSelector : MonoBehaviour
     public GameObject prevJengaTower; // Field to store the previous Jenga tower state
 
     public float prevAverageOfMaxAngles = 0f; // Field to store the previous average of max tilt angles
+    public float prevMaxOfMaxAngles = 0f; // Field to store the previous max of max tilt angles
+
     public bool lastActionWasRevert = false; // Flag to check if the last action was a revert
 
     // Array of Jenga levels to see in the Inspector
@@ -263,6 +265,8 @@ public class AiSelector : MonoBehaviour
 
         // Save the current average tilt angle
         prevAverageOfMaxAngles = GetAverageOfMaxAngles();
+        prevMaxOfMaxAngles = GetMaxOfMaxAngles();
+
 
         // Set the last action flag to false since this is not a revert step
         lastActionWasRevert = false;
@@ -343,8 +347,8 @@ public class AiSelector : MonoBehaviour
             // Update the internal representation of the Jenga tower
             ParseJengaTower();
 
-            // Take an updated screenshot
-            StartCoroutine(TakeScreenshotAfterFrame());
+            // Take an updated screenshot, Masha said it's not needed
+            //StartCoroutine(TakeScreenshotAfterFrame());
 
             // Reset the cubes' starting angles
             ResetCubesStartingAngles();
@@ -415,6 +419,33 @@ public class AiSelector : MonoBehaviour
         }
 
         return totalMaxAngle / pieceMaxTiltAngles.Count;
+    }
+    
+    /// <summary>
+    /// Get the maximum of the maximum tilt angles recorded for all cubes.
+    /// </summary>
+    /// <returns>Maximum of maximum tilt angles</returns>
+    public float GetMaxOfMaxAngles()
+    {
+        if (lastActionWasRevert)
+        {
+            // If the last action was a revert, return the saved maximum
+            return prevMaxOfMaxAngles;
+        }
+
+        if (pieceMaxTiltAngles.Count == 0) return 0f;
+
+        float maxTiltAngle = 0f;
+
+        foreach (var maxAngle in pieceMaxTiltAngles.Values)
+        {
+            if (maxAngle > maxTiltAngle)
+            {
+                maxTiltAngle = maxAngle;
+            }
+        }
+
+        return maxTiltAngle;
     }
 
     void FixedUpdate()
