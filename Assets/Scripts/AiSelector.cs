@@ -212,16 +212,16 @@ public class AiSelector : MonoBehaviour
         int pieceIndex = (int)aiPlayer.pieceSelect;
         if (pieceIndex < 0 || pieceIndex >= levelList.pieces.Length || levelList.pieces[pieceIndex] == null)
         {
-            Debug.LogError("Invalid pieceSelect index.");
-            return;
+            //Debug.LogError("Invalid pieceSelect index.");
+            //return;
         }
 
         Transform pieceTransform = levelList.pieces[pieceIndex];
 
         if (pieceTransform == null || pieceTransform.gameObject == null)
         {
-            Debug.Log("Piece has already been deleted.");
-            return;
+            //Debug.Log("Piece has already been deleted.");
+            //return;
         }
 
         // Perform the move (e.g., change material and destroy the piece)
