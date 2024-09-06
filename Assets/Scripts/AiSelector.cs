@@ -46,7 +46,7 @@ public class AiSelector : MonoBehaviour
 
     // Counter for instantiated Jenga towers
     private int towerInstanceCounter = 0;
-
+    
     void Start()
     {
         // Find the Screenshot object in the scene
@@ -234,6 +234,12 @@ public class AiSelector : MonoBehaviour
 
     private void SaveCurrentState()
     {
+        if (jengaTower == null)
+        {
+            Debug.LogError("Jenga tower is null. Cannot save current state.");
+            return;
+        }
+        
         // Disable the current Jenga tower
         jengaTower.SetActive(false);
 
@@ -246,7 +252,7 @@ public class AiSelector : MonoBehaviour
         prevJengaTower = Instantiate(jengaTower);
         towerInstanceCounter++; // Increment the counter
         prevJengaTower.name = jengaTower.name + "_" + towerInstanceCounter; // Set the name with index
-        prevJengaTower.SetActive(false);
+        prevJengaTower.SetActive(false); // Keep the previous tower inactive
 
         // Enable the original Jenga tower back
         jengaTower.SetActive(true);
@@ -314,10 +320,22 @@ public class AiSelector : MonoBehaviour
         if (prevJengaTower != null)
         {
             // Replace the current Jenga tower with the previous one
-            Destroy(jengaTower);
-            print("Tower Destroyed");
+            if (jengaTower != null)
+            {
+                // Safeguard: Only destroy the current tower if it's not null
+                Destroy(jengaTower);
+                print("Current tower destroyed.");
+            }
+            else
+            {
+                Debug.LogWarning("No current Jenga tower to destroy.");
+            }
+
+            // Activate the previous Jenga tower
             jengaTower = prevJengaTower;
             jengaTower.SetActive(true);
+            prevJengaTower = null; // Clear the reference after reverting
+
             // Update the internal representation of the Jenga tower
             ParseJengaTower();
 
@@ -329,13 +347,13 @@ public class AiSelector : MonoBehaviour
 
             // Set the last action flag to true
             lastActionWasRevert = true;
-            
+
             // Call ResetIsTowerFallen from GameManager
             if (gameManager != null)
             {
                 gameManager.ResetIsTowerFallen();
             }
-            
+
             if (fallDetectModifier != null)
             {
                 fallDetectModifier.ResetFallDetectors();
