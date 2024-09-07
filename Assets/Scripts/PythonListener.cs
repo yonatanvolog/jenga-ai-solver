@@ -33,6 +33,7 @@ public class PythonListener : MonoBehaviour
 
         running = true;
         thread = new Thread(GetData);
+        thread.IsBackground = true;  // Mark thread as background to exit with the application
         thread.Start();
     }
 
@@ -45,9 +46,17 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                client = server.AcceptTcpClient();
-                Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClient));
-                clientThread.Start(client);
+                if (server.Pending())  // Check if there is a pending connection
+                {
+                    client = server.AcceptTcpClient();
+                    Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClient));
+                    clientThread.IsBackground = true;  // Ensure this thread exits when the application closes
+                    clientThread.Start(client);
+                }
+                else
+                {
+                    Thread.Sleep(50);  // Sleep briefly to reduce CPU load when idle
+                }
             }
             catch (SocketException ex)
             {
@@ -69,17 +78,24 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
-                if (bytesRead > 0)
+                if (nwStream.DataAvailable)  // Only read when data is available
                 {
-                    string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
-                    string response = commandHandler.HandleCommand(dataReceived);
-
-                    if (!string.IsNullOrEmpty(response))
+                    int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
+                    if (bytesRead > 0)
                     {
-                        byte[] responseBytes = Encoding.UTF8.GetBytes(response);
-                        nwStream.Write(responseBytes, 0, responseBytes.Length);
+                        string dataReceived = Encoding.UTF8.GetString(buffer, 0, bytesRead).Trim();
+                        string response = commandHandler.HandleCommand(dataReceived);
+
+                        if (!string.IsNullOrEmpty(response))
+                        {
+                            byte[] responseBytes = Encoding.UTF8.GetBytes(response);
+                            nwStream.Write(responseBytes, 0, responseBytes.Length);
+                        }
                     }
+                }
+                else
+                {
+                    Thread.Sleep(50);  // Sleep briefly when no data is available to reduce CPU usage
                 }
             }
             catch (SocketException socketEx)
@@ -108,11 +124,11 @@ public class PythonListener : MonoBehaviour
             server = null;
         }
 
-        if (thread != null)
+        if (thread != null && thread.IsAlive)
         {
             try
             {
-                thread.Abort();  // Forcefully stop the thread
+                thread.Join(1000);  // Wait for up to 1 second for the thread to finish
             }
             catch (ThreadAbortException ex)
             {
