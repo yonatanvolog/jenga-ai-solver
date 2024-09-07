@@ -84,13 +84,13 @@ public class FallDetectModifier : MonoBehaviour
         SetMeshRendererEnabled(true);
 
         // Wait for 0.5 seconds
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         // Lerp the colliders to their new positions over 1 second
-        yield return StartCoroutine(LerpColliders(value, 1f));
+        yield return StartCoroutine(LerpColliders(value, 0f));
 
         // Wait for another 0.5 seconds
-        yield return new WaitForSeconds(0.5f);
+        //yield return new WaitForSeconds(0.5f);
 
         // Disable MeshRenderers
         SetMeshRendererEnabled(false);
