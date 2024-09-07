@@ -74,6 +74,7 @@ public class AiSelector : MonoBehaviour
 
         ParseJengaTower();
         ResetCubesStartingAngles();
+        StartCoroutine(UpdateMaxTiltAnglesRoutine());
     }
 
     private void OnEnable()
@@ -448,18 +449,27 @@ public class AiSelector : MonoBehaviour
         return maxTiltAngle;
     }
 
-    void FixedUpdate()
+    private IEnumerator UpdateMaxTiltAnglesRoutine()
     {
-        // Update the maximum tilt angles every 'updateFrameInterval' frames
-        if (frameCounter >= updateFrameInterval)
+        while (true)
         {
-            UpdateMaxTiltAnglesForAllPieces();
-            frameCounter = 0; // Reset the counter after updating
+            // Wait until it's time to update (based on the frame interval)
+            if (frameCounter >= updateFrameInterval)
+            {
+                // Perform the update
+                yield return StartCoroutine(UpdateMaxTiltAnglesForAllPiecesCoroutine());
+
+                // Reset the frame counter
+                frameCounter = 0;
+            }
+            frameCounter++;
+
+            // Wait until the next FixedUpdate to continue
+            yield return new WaitForFixedUpdate();
         }
-        frameCounter++;
     }
 
-    private void UpdateMaxTiltAnglesForAllPieces()
+    private IEnumerator UpdateMaxTiltAnglesForAllPiecesCoroutine()
     {
         foreach (var level in jengaTowerLevels)
         {
@@ -476,6 +486,9 @@ public class AiSelector : MonoBehaviour
                     pieceMaxTiltAngles[piece] = Mathf.Max(pieceMaxTiltAngles[piece], currentTiltAngle);
                 }
             }
+
+            // Yield control so the coroutine can run across multiple frames
+            yield return null;
         }
     }
 
