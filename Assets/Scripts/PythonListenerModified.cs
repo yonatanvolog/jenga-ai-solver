@@ -4,7 +4,7 @@ using System.Text;
 using UnityEngine;
 using System.Threading;
 
-public class PythonListener : MonoBehaviour
+public class PythonListenerModified : MonoBehaviour
 {
     Thread thread;
     public int connectionPort = 25001;
