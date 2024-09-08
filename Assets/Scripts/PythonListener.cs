@@ -10,6 +10,7 @@ public class PythonListener : MonoBehaviour
     public int connectionPort = 25001;
     TcpListener server;
     TcpClient client;
+    NetworkStream nwStream;  // Store the network stream for reuse
     bool running;
 
     public CommandHandler commandHandler;
@@ -49,6 +50,7 @@ public class PythonListener : MonoBehaviour
                 if (server.Pending())  // Check if there is a pending connection
                 {
                     client = server.AcceptTcpClient();
+                    nwStream = client.GetStream();  // Save the stream for sending data later
                     Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClient));
                     clientThread.IsBackground = true;  // Ensure this thread exits when the application closes
                     clientThread.Start(client);
@@ -71,7 +73,7 @@ public class PythonListener : MonoBehaviour
     void HandleClient(object clientObj)
     {
         TcpClient client = (TcpClient)clientObj;
-        NetworkStream nwStream = client.GetStream();
+        nwStream = client.GetStream();
         byte[] buffer = new byte[client.ReceiveBufferSize];
 
         while (running && client.Connected)
@@ -106,6 +108,21 @@ public class PythonListener : MonoBehaviour
         }
 
         client.Close();
+    }
+
+    // Method to send data to Python
+    public void SendData(string message)
+    {
+        if (nwStream != null && nwStream.CanWrite)
+        {
+            byte[] dataToSend = Encoding.UTF8.GetBytes(message);
+            nwStream.Write(dataToSend, 0, dataToSend.Length);
+            nwStream.Flush();  // Ensure all data is sent immediately
+        }
+        else
+        {
+            Debug.LogWarning("No active connection to send data.");
+        }
     }
 
     public void StopListener()
