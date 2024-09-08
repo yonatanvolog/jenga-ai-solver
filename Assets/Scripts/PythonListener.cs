@@ -1,3 +1,4 @@
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -113,17 +114,36 @@ public class PythonListener : MonoBehaviour
     // Method to send data to Python
     public void SendData(string message)
     {
-        if (nwStream != null && nwStream.CanWrite)
+        try
         {
-            byte[] dataToSend = Encoding.UTF8.GetBytes(message);
-            nwStream.Write(dataToSend, 0, dataToSend.Length);
-            nwStream.Flush();  // Ensure all data is sent immediately
+            using (TcpClient sendClient = new TcpClient("127.0.0.1", 25002))  // Connect to port 25002 for sending data
+            {
+                NetworkStream sendStream = sendClient.GetStream();
+                if (sendStream.CanWrite)
+                {
+                    byte[] dataToSend = Encoding.UTF8.GetBytes(message);
+                    sendStream.Write(dataToSend, 0, dataToSend.Length);
+                    sendStream.Flush();  // Ensure all data is sent immediately
+                    Debug.Log("Message sent to Python: " + message);
+
+                    // Optional: Read the response from Python
+                    byte[] responseBuffer = new byte[sendClient.ReceiveBufferSize];
+                    int bytesRead = sendStream.Read(responseBuffer, 0, sendClient.ReceiveBufferSize);
+                    string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
+                    Debug.Log("Response from Python: " + response);
+                }
+            }
         }
-        else
+        catch (SocketException socketEx)
         {
-            Debug.LogWarning("No active connection to send data.");
+            Debug.LogError("SocketException: " + socketEx.Message);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogError("Exception: " + ex.Message);
         }
     }
+
 
     public void StopListener()
     {
