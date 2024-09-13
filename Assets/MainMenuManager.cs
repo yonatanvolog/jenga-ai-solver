@@ -16,12 +16,14 @@ public class MainMenuManager : MonoBehaviour
 {
     public TMP_Dropdown player1Dropdown;
     public TMP_Dropdown player2Dropdown;
+    public TMP_Dropdown roundsDropdown; // Add dropdown for number of rounds
     public Button startButton;
     public Button quitButton;
     public GameObject mainMenu; // Reference to the main menu
 
     private PlayerType player1Selection;
     private PlayerType player2Selection;
+    private int num_of_rounds; // To store selected number of rounds
 
     public CommandDispatcher commandDispatcher;  // Add CommandDispatcher field
 
@@ -37,6 +39,9 @@ public class MainMenuManager : MonoBehaviour
         SetDefaultDropdownValue(player1Dropdown, "Human Player");
         SetDefaultDropdownValue(player2Dropdown, "Human Player");
 
+        // Set default rounds value (optional, depending on your dropdown)
+        SetDefaultDropdownValue(roundsDropdown, "1"); // Example of default
+
         // Add listeners for the buttons
         startButton.onClick.AddListener(OnStartButtonPressed);
         quitButton.onClick.AddListener(OnQuitButtonPressed);
@@ -44,10 +49,12 @@ public class MainMenuManager : MonoBehaviour
         // Add listeners for TMP dropdowns
         player1Dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(player1Dropdown, 1); });
         player2Dropdown.onValueChanged.AddListener(delegate { DropdownValueChanged(player2Dropdown, 2); });
+        roundsDropdown.onValueChanged.AddListener(delegate { RoundsDropdownValueChanged(roundsDropdown); });
 
         // Set default selections to HUMAN
         player1Selection = PlayerType.HUMAN;
         player2Selection = PlayerType.HUMAN;
+        num_of_rounds = 1;
     }
 
     void Update()
@@ -71,6 +78,12 @@ public class MainMenuManager : MonoBehaviour
         {
             player2Selection = selectedType;
         }
+    }
+
+    void RoundsDropdownValueChanged(TMP_Dropdown dropdown)
+    {
+        string selectedRounds = dropdown.options[dropdown.value].text;
+        num_of_rounds = Int32.Parse(selectedRounds.Split(' ')[0]);
     }
 
     PlayerType GetPlayerTypeFromDropdown(string option)
@@ -104,15 +117,13 @@ public class MainMenuManager : MonoBehaviour
     {
         Debug.Log("Player 1: " + player1Selection);
         Debug.Log("Player 2: " + player2Selection);
+        Debug.Log("Number of Rounds: " + num_of_rounds);
 
         // Disable the main menu
         ToggleMainMenu(false);
 
         // Send "StartGame" command to Python via CommandDispatcher
-        commandDispatcher.SendCommand(CommandDispatcher.Command.StartGame);
-
-        // Save the selections and start the game
-        StartGame(player1Selection, player2Selection);
+        StartGame(player1Selection, player2Selection, num_of_rounds);
     }
 
     void OnQuitButtonPressed()
@@ -121,13 +132,12 @@ public class MainMenuManager : MonoBehaviour
         Application.Quit();
     }
 
-    void StartGame(PlayerType player1, PlayerType player2)
+    void StartGame(PlayerType player1, PlayerType player2, int num_of_rounds)
     {
-        // Logic to start the game with the chosen players
-        Debug.Log("Starting game with Player 1: " + player1 + " and Player 2: " + player2);
-        //commandDispatcher.SendCommand(CommandDispatcher.Command.StartGame);
-        commandDispatcher.DispatchStartGame((int)player1, (int)player2);
-        //SceneManager.LoadScene("GameScene"); // Example of loading the game scene
+        // Logic to start the game with the chosen players and number of rounds
+        Debug.Log("Starting game with Player 1: " + player1 + " and Player 2: " + player2 + " and Rounds: " + num_of_rounds);
+        commandDispatcher.DispatchStartGame((int)player1, (int)player2, num_of_rounds);
+        // SceneManager.LoadScene("GameScene"); // Example of loading the game scene
     }
 
     void ToggleMainMenu(bool isEnabled)

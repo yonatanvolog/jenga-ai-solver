@@ -28,10 +28,10 @@ public class CommandDispatcher : MonoBehaviour
     }
 
     // Method to send the StartGame command with player1 and player2 params
-    public void DispatchStartGame(int player1, int player2)
+    public void DispatchStartGame(int player1, int player2, int num_of_rounds)
     {
 
-        string commandString = $"start {player1} {player2}";
+        string commandString = $"start {player1} {player2} {num_of_rounds}";
         Debug.Log("sending to python: " + commandString);
 
         pythonListener.SendData(commandString);
