@@ -1824,6 +1824,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 369.5
       objectReference: {fileID: 0}
+    - target: {fileID: 7651273406827416915, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: selectableLayerMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 8639969124939020940, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: humanPlayer
       value: 

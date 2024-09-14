@@ -17,6 +17,8 @@ public class Selector : MonoBehaviour
     private RaycastHit raycastHit;
     private bool pieceSelected;
 
+    public LayerMask selectableLayerMask; // New layer mask for "Selectable" objects
+
     private void OnEnable()
     {
         pieceSelected = false;
@@ -41,7 +43,9 @@ public class Selector : MonoBehaviour
             highlight = null;
         }
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit)) //Make sure you have EventSystem in the hierarchy before using EventSystem
+
+        // Using the selectableLayerMask to limit the raycast to the "Selectable" layer
+        if (!EventSystem.current.IsPointerOverGameObject() && Physics.Raycast(ray, out raycastHit, Mathf.Infinity, selectableLayerMask))
         {
             highlight = raycastHit.transform;
             if (highlight.CompareTag("Selectable") && highlight != selection)
@@ -75,7 +79,7 @@ public class Selector : MonoBehaviour
                 }
                 highlight = null;
 
-                // Start coroutine to destroy the selected object after 1 second
+                // Start coroutine to destroy the selected object after a delay
                 pieceSelected = true;
                 StartCoroutine(DestroySelectedObjectAfterDelay(selection.gameObject, delayBeforeDestroy));
             }
