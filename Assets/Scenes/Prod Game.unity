@@ -1760,6 +1760,10 @@ PrefabInstance:
       propertyPath: m_PresetInfoIsWorld
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1887421909409621996, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 2171721177386294339, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_Name
       value: Main Game Prefab
@@ -1824,6 +1828,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 369.5
       objectReference: {fileID: 0}
+    - target: {fileID: 6465993363364684780, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 7651273406827416915, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: selectableLayerMask.m_Bits
       value: 8
@@ -1840,6 +1848,10 @@ PrefabInstance:
       propertyPath: playerTurnDisplay
       value: 
       objectReference: {fileID: 211552178}
+    - target: {fileID: 8953100495816143727, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_CullingMask.m_Bits
+      value: 8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
