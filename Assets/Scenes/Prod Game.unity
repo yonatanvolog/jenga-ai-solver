@@ -1064,6 +1064,34 @@ PrefabInstance:
       propertyPath: m_text
       value: Player 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Random
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: Deep Q-Network
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: 'SARSA: State-Action-Reward-State-Action'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_Text
+      value: Human Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_Text
+      value: Human Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[5].m_Text
+      value: Human Player
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -1618,6 +1646,30 @@ PrefabInstance:
     - target: {fileID: 2197045543071570817, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
       propertyPath: m_text
       value: Player 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Random
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: Deep Q-Network
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: 'SARSA: State-Action-Reward-State-Action'
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[3].m_Text
+      value: Human Player
+      objectReference: {fileID: 0}
+    - target: {fileID: 8179001695993240679, guid: 9c00385676b85d34f82ace27ce5ebe74, type: 3}
+      propertyPath: m_Options.m_Options.Array.data[4].m_Text
+      value: Human Player
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

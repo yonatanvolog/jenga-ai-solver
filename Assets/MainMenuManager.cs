@@ -5,11 +5,11 @@ using UnityEngine.UI;
 
 public enum PlayerType
 {
-    RANDOM,
-    DQN,
-    SARSA,
-    GSBAS,
-    HUMAN
+    RANDOM = 0,
+    DQN = 1,
+    SARSA = 2,
+    GSBAS = 3,
+    HUMAN = 4
 }
 
 public class MainMenuManager : MonoBehaviour
@@ -90,18 +90,26 @@ public class MainMenuManager : MonoBehaviour
     {
         switch (option)
         {
-            case "Human Player":
-                return PlayerType.HUMAN;
-            case "AI - Deep Q Network":
-                return PlayerType.DQN;
-            case "AI - Monte Carlo Tree Search":
-                return PlayerType.SARSA;
-            case "AI - Random":
+            case string s when s.StartsWith("Random"):
                 return PlayerType.RANDOM;
+
+            case string s when s.StartsWith("Deep"):
+                return PlayerType.DQN;
+
+            case string s when s.StartsWith("SARSA"):
+                return PlayerType.SARSA;
+
+            case string s when s.StartsWith("GSBAS"):
+                return PlayerType.GSBAS;
+
+            case string s when s.StartsWith("Human Player"):
+                return PlayerType.HUMAN;
+
             default:
                 throw new ArgumentException("Unknown player type: " + option);
         }
     }
+
 
     void SetDefaultDropdownValue(TMP_Dropdown dropdown, string defaultOption)
     {
