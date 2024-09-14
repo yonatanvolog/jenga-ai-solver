@@ -24,7 +24,8 @@ public class MainMenuManager : MonoBehaviour
     private PlayerType player1Selection;
     private PlayerType player2Selection;
     private int num_of_rounds; // To store selected number of rounds
-
+    public CameraController cameraController;
+    public bool menu_status = false;
     public CommandDispatcher commandDispatcher;  // Add CommandDispatcher field
 
     void Start()
@@ -33,6 +34,12 @@ public class MainMenuManager : MonoBehaviour
         if (commandDispatcher == null)
         {
             commandDispatcher = GameObject.FindObjectOfType<CommandDispatcher>();
+        }
+        
+        // Find cameraController in the scene
+        if (cameraController == null)
+        {
+            cameraController = GameObject.FindObjectOfType<CameraController>();
         }
 
         // Set default value to "Human Player"
@@ -62,8 +69,15 @@ public class MainMenuManager : MonoBehaviour
         // Enable the main menu if ESC is pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            //ToggleMainMenu();
             commandDispatcher.DispatchEndGame();
+            ToggleMainMenu();
+        }
+
+        //Sometimes python misses 
+        if ((mainMenu.activeSelf == false && menu_status == true) || 
+            (mainMenu.activeSelf == true && menu_status == false))
+        {
+            ToggleMainMenu();
         }
     }
 
@@ -152,9 +166,19 @@ public class MainMenuManager : MonoBehaviour
     // Method to toggle the main menu visibility
     public void ToggleMainMenu()
     {
-        // Toggle the active state of mainMenu using a ternary operator
-        //TODO: disable humanSelector when mainMenu.activeSelf = true
-        mainMenu.SetActive(mainMenu.activeSelf ? false : true);
+        if (mainMenu.activeSelf == true)
+        {
+            menu_status = false;
+            mainMenu.SetActive(false);
+            cameraController.ToggleMenuMode(false);
+            cameraController.ToggleMouseControl(true);
+        }
+        else
+        {
+            menu_status = true;
+            mainMenu.SetActive(true);
+            cameraController.ToggleMenuMode(true);
+            cameraController.ToggleMouseControl(false);
+        }
     }
-
 }

@@ -539,6 +539,7 @@ MonoBehaviour:
   startButton: {fileID: 1312667256}
   quitButton: {fileID: 437849940}
   mainMenu: {fileID: 2004583132}
+  cameraController: {fileID: 0}
   commandDispatcher: {fileID: 0}
 --- !u!4 &559144247 stripped
 Transform:
@@ -1767,6 +1768,26 @@ PrefabInstance:
     - target: {fileID: 2171721177386294339, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_Name
       value: Main Game Prefab
+      objectReference: {fileID: 0}
+    - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: minYPosition
+      value: -15
+      objectReference: {fileID: 0}
+    - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: rotationSpeed
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: waveFrequency
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: waveAmplitudeY
+      value: 11
+      objectReference: {fileID: 0}
+    - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: waveAmplitudeRotationX
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3651364272923498410, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_LocalPosition.y

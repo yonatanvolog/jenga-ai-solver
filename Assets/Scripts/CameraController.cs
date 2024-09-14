@@ -18,9 +18,18 @@ public class CameraController : MonoBehaviour
     private float currentYPosition;
     private float targetDistance;
     private float currentDistance;
-    
+
     private Vector3 targetPositionCopy;
     private Quaternion targetRotationCopy;
+
+    private bool isMouseControlEnabled = false; // Tracks if mouse control is enabled
+    private bool isMenuModeEnabled = true;    // Tracks if menu mode is enabled
+    private float menuRotationAngle = 0f;      // Tracks rotation for menu mode
+
+    // Amplitude and frequency for the wave effect
+    public float waveAmplitudeY = 5.0f; // How much the Y position should change
+    public float waveAmplitudeRotationX = 10.0f; // How much the X rotation should change
+    public float waveFrequency = 1.0f; // Speed of the wave
 
     void Start()
     {
@@ -49,8 +58,23 @@ public class CameraController : MonoBehaviour
 
     void Update()
     {
-        // Check if the right mouse button is held down
-        if (Input.GetMouseButton(1))
+        // Menu mode rotation with wave effect
+        if (isMenuModeEnabled)
+        {
+            print("timescale :" + Time.timeScale);
+            menuRotationAngle += (rotationSpeed + 22) * Time.deltaTime * (1 / Time.timeScale); // Rotate smoothly, adjust rotation speed to menu/human mode
+
+            // Apply the wave effect using the sine function for Y position and X rotation
+            float wave = (Mathf.Sin(Time.time * waveFrequency * (1 / Time.timeScale)) + 1) / 2; // Normalize sin to be between 0 and 1
+
+            currentY = menuRotationAngle; // Spin the camera
+            currentYPosition = Mathf.Lerp(minYPosition + 30, minYPosition + 30 + waveAmplitudeY, wave); // Adjust Y position
+            float currentRotationX = Mathf.Lerp(startRotation.x, startRotation.x - waveAmplitudeRotationX, wave); // Adjust X rotation
+
+            // Update the camera position and rotation based on the wave effect
+            UpdateCameraPosition(currentRotationX);
+        }
+        else if (isMouseControlEnabled && Input.GetMouseButton(1)) // Mouse control for camera
         {
             // Get the mouse movement
             float mouseX = Input.GetAxis("Mouse X");
@@ -65,27 +89,33 @@ public class CameraController : MonoBehaviour
         }
 
         // Adjust distance from target using scroll wheel
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0)
+        if (isMouseControlEnabled)
         {
-            targetDistance -= scroll * scrollSpeed;
-            targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll != 0)
+            {
+                targetDistance -= scroll * scrollSpeed;
+                targetDistance = Mathf.Clamp(targetDistance, minDistance, maxDistance);
+            }
         }
 
         // Smoothly interpolate the distance for a nice fade effect
         currentDistance = Mathf.Lerp(currentDistance, targetDistance, Time.deltaTime / zoomDampening);
 
-        // Update the camera position
-        UpdateCameraPosition();
+        // Update the camera position when not in menu mode
+        if (!isMenuModeEnabled)
+        {
+            UpdateCameraPosition(startRotation.x);
+        }
     }
 
-    void UpdateCameraPosition()
+    void UpdateCameraPosition(float currentRotationX)
     {
         // Calculate the direction from the target to the camera
         Vector3 direction = new Vector3(0, 0, -currentDistance);
 
-        // Apply rotation based on currentY
-        Quaternion rotation = Quaternion.Euler(startRotation.x, currentY, 0);
+        // Apply rotation based on currentY and currentRotationX
+        Quaternion rotation = Quaternion.Euler(currentRotationX, currentY, 0);
         Vector3 position = targetPositionCopy + rotation * direction;
 
         // Apply vertical position adjustment based on currentYPosition
@@ -94,5 +124,23 @@ public class CameraController : MonoBehaviour
         // Apply the calculated rotation and position
         transform.position = position;
         transform.LookAt(targetPositionCopy);
+    }
+
+    // Method to toggle mouse control on and off
+    public void ToggleMouseControl(bool isEnabled)
+    {
+        isMouseControlEnabled = isEnabled;
+    }
+
+    // Method to enable or disable menu mode, which rotates the camera around the target
+    public void ToggleMenuMode(bool isEnabled)
+    {
+        isMenuModeEnabled = isEnabled;
+
+        // Optionally, reset the rotation angle when menu mode is enabled
+        if (isEnabled)
+        {
+            menuRotationAngle = 0f; // Reset rotation for smooth transition
+        }
     }
 }
