@@ -31,6 +31,6 @@ public class AiPlayer : MonoBehaviour, IPlayer
 
     public void EndTurn()
     {
-        GameManager.Instance.EndTurn(); // Notify the GameManager that the player has finished their turn
+        //GameManager.Instance.EndTurn(); // Notify the GameManager that the player has finished their turn
     }
 }

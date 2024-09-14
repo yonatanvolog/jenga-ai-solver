@@ -17,9 +17,11 @@ public class GameManager : MonoBehaviour
     public TMP_Text playerTurnDisplay;
     public CommandDispatcher commandDispatcher;
     public MainMenuManager mainMenuManager;
-    
-    
+
+    public PlayerType currentPlayerType;
     public int currentPlayerIndex;
+    public int currentRoundNum;
+
     private bool isPlayerTurn;
 
     // Private field to store the GameManager instance
@@ -82,6 +84,9 @@ public class GameManager : MonoBehaviour
     {
         // Update player turn display
         playerTurnDisplay.text = $"Now playing PlayerType: {((PlayerType)playerType)}, PlayerIndex: {playerIndex + 1}, Round: {roundNum}";
+        currentPlayerType = (PlayerType)playerType;
+        currentPlayerIndex = playerIndex;
+        currentRoundNum = roundNum;
 
         if ((PlayerType)playerType == PlayerType.HUMAN)
         {
@@ -105,50 +110,11 @@ public class GameManager : MonoBehaviour
         {
             aiSelector.UpdateAfterHumanTurn();
         }
-
-        // End the player's turn
-        EndTurn();
     }
     
     public void ToggleMenu()
     {
         mainMenuManager.ToggleMainMenu();
-    }
-
-    public void StartTurn(int playerIndex)
-    {
-        if (isPlayerTurn)
-            return;
-
-        currentPlayerIndex = playerIndex;
-        isPlayerTurn = true;
-        // TODO: remove if condition when finished development of game
-        if (humanPlayers.Length > 0 || aiPlayers.Length > 0)
-        {
-            players[currentPlayerIndex].StartTurn(); // Notify the player to start their turn
-        }
-
-        StartCoroutine(WaitForPlayerTurn());
-    }
-
-    private IEnumerator WaitForPlayerTurn()
-    {
-        while (isPlayerTurn)
-        {
-            yield return null; // Wait for the next frame
-        }
-        NextTurn();
-    }
-
-    private void NextTurn()
-    {
-        currentPlayerIndex = (currentPlayerIndex + 1) % players.Length;
-        StartTurn(currentPlayerIndex); // Start the next player's turn
-    }
-
-    public void EndTurn()
-    {
-        isPlayerTurn = false; // End the current player's turn
     }
 
     private void HandleTowerFall(FallDetector fallDetector)
@@ -161,8 +127,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Mark the tower as fallen and handle the event
-        Debug.Log("The tower has fallen! Restarting the game...");
+        Debug.Log("The tower has fallen!");
         isTowerFallen = true;
+        playerTurnDisplay.text = $"Player Collaped the tower: PlayerType: {((PlayerType)currentPlayerType)}, PlayerIndex: {currentPlayerIndex + 1}, Round: {currentRoundNum}";
         //gameManager.RestartGame();
     }
 
