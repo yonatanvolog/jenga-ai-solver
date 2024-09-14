@@ -62,7 +62,7 @@ public class MainMenuManager : MonoBehaviour
         // Enable the main menu if ESC is pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ToggleMainMenu(true);
+            ToggleMainMenu();
         }
     }
 
@@ -120,7 +120,7 @@ public class MainMenuManager : MonoBehaviour
         Debug.Log("Number of Rounds: " + num_of_rounds);
 
         // Disable the main menu
-        ToggleMainMenu(false);
+        ToggleMainMenu();
 
         // Send "StartGame" command to Python via CommandDispatcher
         StartGame(player1Selection, player2Selection, num_of_rounds);
@@ -140,8 +140,12 @@ public class MainMenuManager : MonoBehaviour
         // SceneManager.LoadScene("GameScene"); // Example of loading the game scene
     }
 
-    void ToggleMainMenu(bool isEnabled)
+    // Method to toggle the main menu visibility
+    public void ToggleMainMenu()
     {
-        mainMenu.SetActive(isEnabled); // Enable or disable the main menu
+        // Toggle the active state of mainMenu using a ternary operator
+        //TODO: disable humanSelector when mainMenu.activeSelf = true
+        mainMenu.SetActive(mainMenu.activeSelf ? false : true);
     }
+
 }

@@ -16,7 +16,9 @@ public class CommandHandler : MonoBehaviour
         GetNumOfBlocksInLevel,
         GetAverageMaxTiltAngle,
         GetMostMaxTiltAngle, // Added new command for max tilt angle
-        RevertStep, 
+        PlayerTurn, // Added new command for handling player turn
+        RevertStep,
+        ToggleMenu, // Added new command for toggling menu
         Unknown
     }
 
@@ -103,8 +105,14 @@ public class CommandHandler : MonoBehaviour
             case CommandType.GetMostMaxTiltAngle: // New case for max tilt angle
                 mainThreadContext.Send(_ => response = HandleGetMostMaxTiltAngle(), null);
                 break;
+            case CommandType.PlayerTurn: // Added new case for handling player turn
+                HandlePlayerTurnCommand(data);
+                break;
             case CommandType.RevertStep:
                 mainThreadContext.Send(_ => response = HandleRevertStep(), null); 
+                break;
+            case CommandType.ToggleMenu: // Added case for toggling menu
+                HandleToggleMenuCommand();
                 break;
             case CommandType.Unknown:
                 Debug.Log("Unknown command received.");
@@ -161,9 +169,17 @@ public class CommandHandler : MonoBehaviour
         {
             return CommandType.GetMostMaxTiltAngle;
         }
+        else if (data.StartsWith("player_turn")) // Parsing for the player turn command
+        {
+            return CommandType.PlayerTurn;
+        }
         else if (data.StartsWith("revert_step"))
         {
             return CommandType.RevertStep;
+        }
+        else if (data.Equals("toggle_menu")) // Parsing for the toggle_menu command
+        {
+            return CommandType.ToggleMenu;
         }
         else
         {
@@ -313,6 +329,34 @@ public class CommandHandler : MonoBehaviour
         float maxTiltAngle = aiSelector != null ? aiSelector.GetMaxOfMaxAngles() : 0f;
         Debug.Log($"Most max tilt angle: {maxTiltAngle}");
         return maxTiltAngle.ToString();
+    }
+
+    private void HandlePlayerTurnCommand(string data) // New handler for player turn command
+    {
+        string[] parts = data.Split(' ');
+        if (parts.Length == 4 && int.TryParse(parts[1], out int playerType) &&
+            int.TryParse(parts[2], out int playerIndex) && int.TryParse(parts[3], out int roundNumber))
+        {
+            Debug.Log($"Handling player turn: PlayerType={playerType}, PlayerIndex={playerIndex}, Round={roundNumber}");
+            mainThreadContext.Post(_ => gameManager.PlayerTurn(playerType, playerIndex, roundNumber), null);
+        }
+        else
+        {
+            Debug.LogError("Invalid player_turn command format or values.");
+        }
+    }
+
+    private void HandleToggleMenuCommand() // Handler for toggle_menu command
+    {
+        if (gameManager != null)
+        {
+            Debug.Log("Toggling menu.");
+            mainThreadContext.Post(_ => gameManager.ToggleMenu(), null);
+        }
+        else
+        {
+            Debug.LogError("GameManager is not available to toggle the menu.");
+        }
     }
 
     private string HandleRevertStep() 

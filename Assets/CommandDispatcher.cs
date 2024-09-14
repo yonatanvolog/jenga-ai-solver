@@ -36,6 +36,14 @@ public class CommandDispatcher : MonoBehaviour
 
         pythonListener.SendData(commandString);
     }
+    
+    public void DispatchFinishedMove()
+    {
+        string commandString = $"finished_move";
+        Debug.Log("sending to python: " + commandString);
+
+        pythonListener.SendData(commandString);
+    }
 
     // Method to handle converting enum to the appropriate command string
     private string ConvertCommandToString(Command command)

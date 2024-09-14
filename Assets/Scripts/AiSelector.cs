@@ -77,6 +77,14 @@ public class AiSelector : MonoBehaviour
         StartCoroutine(UpdateMaxTiltAnglesRoutine());
     }
 
+    public void UpdateAfterHumanTurn()
+    {
+        // Print the structure of the Jenga tower after the move
+        ParseJengaTower();
+        StartCoroutine(PrintJengaTowerStructure());
+        return;
+    } 
+
     private void OnEnable()
     {
         pieceSelected = false;

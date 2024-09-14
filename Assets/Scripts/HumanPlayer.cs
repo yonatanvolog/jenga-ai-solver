@@ -1,31 +1,29 @@
 using System.Collections;
 using UnityEngine;
 
-public class HumanPlayer : MonoBehaviour, IPlayer
+public class HumanPlayer : MonoBehaviour
 {
     public Selector selector;
+    public CommandDispatcher commandDispatcher;
 
-    public void StartTurn()
+    private void Start()
     {
-        Debug.Log("Human player turn");
-        StartCoroutine(HandleTurn());
+        // Find and assign CommandDispatcher
+        commandDispatcher = FindObjectOfType<CommandDispatcher>();
+        if (commandDispatcher == null)
+        {
+            Debug.LogError("CommandDispatcher component not found in the scene.");
+        }
     }
-
-    private IEnumerator HandleTurn()
+    
+    public IEnumerator HandleTurn()
     {
         selector.enabled = true;
         while (!selector.IsPieceSelected())
         {
             yield return null; // Wait for the next frame
         }
+        commandDispatcher.DispatchFinishedMove();
         selector.enabled = false;
-        EndTurn();
-    }
-
-    public void EndTurn()
-    {
-        Debug.Log("Human ended turn");
-
-        GameManager.Instance.EndTurn(); // Notify the GameManager that the player has finished their turn
     }
 }
