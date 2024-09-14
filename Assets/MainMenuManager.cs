@@ -62,7 +62,8 @@ public class MainMenuManager : MonoBehaviour
         // Enable the main menu if ESC is pressed
         if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ToggleMainMenu();
+            //ToggleMainMenu();
+            commandDispatcher.DispatchEndGame();
         }
     }
 

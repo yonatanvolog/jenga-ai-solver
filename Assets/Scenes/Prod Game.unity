@@ -1736,6 +1736,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 348345777718260403, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_text
+      value: 'Hold right mouse button to move
+
+        Press left mouse button to
+        remove pieces
+
+        Press Escape to end game and return to menu
+
+
+
+
+
+
+'
+      objectReference: {fileID: 0}
     - target: {fileID: 407162374132144531, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -1803,6 +1819,10 @@ PrefabInstance:
     - target: {fileID: 5366189174015687878, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6392785375640497954, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 369.5
       objectReference: {fileID: 0}
     - target: {fileID: 8639969124939020940, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: humanPlayer
