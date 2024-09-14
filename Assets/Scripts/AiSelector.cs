@@ -52,9 +52,17 @@ public class AiSelector : MonoBehaviour
     // Field to control the frame interval for updates
     public int updateFrameInterval = 10;
     private int frameCounter = 0;
+    public CommandDispatcher commandDispatcher;
     
     void Start()
     {
+        // Find and assign CommandDispatcher
+        commandDispatcher = FindObjectOfType<CommandDispatcher>();
+        if (commandDispatcher == null)
+        {
+            Debug.LogError("CommandDispatcher component not found in the scene.");
+        }
+        
         // Find the Screenshot object in the scene
         screenshot = FindObjectOfType<Screenshot>();
 
@@ -245,6 +253,7 @@ public class AiSelector : MonoBehaviour
         // Save the current state before performing the move
         SaveCurrentState();
         HandlePieceMoveQuick(pieceTransform);
+        commandDispatcher.DispatchFinishedMove();
     }
 
     private void SaveCurrentState()

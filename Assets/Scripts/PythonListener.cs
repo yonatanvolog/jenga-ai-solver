@@ -112,37 +112,56 @@ public class PythonListener : MonoBehaviour
     }
 
     // Method to send data to Python
-    public void SendData(string message)
+    public void SendData(string message, int maxRetryAttempts = 3, int retryDelayMilliseconds = 500)
     {
-        try
-        {
-            using (TcpClient sendClient = new TcpClient("127.0.0.1", 25002))  // Connect to port 25002 for sending data
-            {
-                NetworkStream sendStream = sendClient.GetStream();
-                if (sendStream.CanWrite)
-                {
-                    byte[] dataToSend = Encoding.UTF8.GetBytes(message);
-                    sendStream.Write(dataToSend, 0, dataToSend.Length);
-                    sendStream.Flush();  // Ensure all data is sent immediately
-                    Debug.Log("Message sent to Python: " + message);
+        int attempts = 0;
 
-                    // Optional: Read the response from Python
-                    byte[] responseBuffer = new byte[sendClient.ReceiveBufferSize];
-                    int bytesRead = sendStream.Read(responseBuffer, 0, sendClient.ReceiveBufferSize);
-                    string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
-                    Debug.Log("Response from Python: " + response);
+        while (attempts < maxRetryAttempts)
+        {
+            try
+            {
+                using (TcpClient sendClient = new TcpClient("127.0.0.1", 25002))  // Connect to port 25002 for sending data
+                {
+                    NetworkStream sendStream = sendClient.GetStream();
+                    if (sendStream.CanWrite)
+                    {
+                        byte[] dataToSend = Encoding.UTF8.GetBytes(message);
+                        sendStream.Write(dataToSend, 0, dataToSend.Length);
+                        sendStream.Flush();  // Ensure all data is sent immediately
+                        Debug.Log("Message sent to Python: " + message);
+
+                        // Optional: Read the response from Python
+                        byte[] responseBuffer = new byte[sendClient.ReceiveBufferSize];
+                        int bytesRead = sendStream.Read(responseBuffer, 0, sendClient.ReceiveBufferSize);
+                        string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
+                        Debug.Log("Response from Python: " + response);
+                    }
+
+                    // Exit if successful
+                    break;
                 }
             }
-        }
-        catch (SocketException socketEx)
-        {
-            Debug.LogError("SocketException: " + socketEx.Message);
-        }
-        catch (Exception ex)
-        {
-            Debug.LogError("Exception: " + ex.Message);
+            catch (SocketException socketEx)
+            {
+                attempts++;
+                Debug.Log($"SocketException: {socketEx.Message}. Attempt {attempts} of {maxRetryAttempts}");
+                if (attempts >= maxRetryAttempts)
+                {
+                    Debug.Log("Max retry attempts reached. Failed to send data.");
+                    break;
+                }
+
+                // Wait for a bit before trying again
+                Thread.Sleep(retryDelayMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                Debug.Log($"Exception: {ex.Message}");
+                break;  // For non-socket exceptions, we should not retry
+            }
         }
     }
+
 
 
     public void StopListener()
