@@ -16,8 +16,9 @@ public class Selector : MonoBehaviour
     private Transform selection;
     private RaycastHit raycastHit;
     private bool pieceSelected;
-
+    private Dictionary<int, string> colorMap;
     public LayerMask selectableLayerMask; // New layer mask for "Selectable" objects
+    public CommandDispatcher commandDispatcher;
 
     private void OnEnable()
     {
@@ -32,6 +33,23 @@ public class Selector : MonoBehaviour
     public bool IsPieceSelected()
     {
         return pieceSelected;
+    }
+
+    private void Start()
+    {
+        // Find and assign CommandDispatcher
+        commandDispatcher = FindObjectOfType<CommandDispatcher>();
+        if (commandDispatcher == null)
+        {
+            Debug.LogError("CommandDispatcher component not found in the scene.");
+        }
+        
+        colorMap = new Dictionary<int, string>
+        {
+            { 0, "y" }, // Map 0 to "y"
+            { 1, "b" }, // Map 1 to "b"
+            { 2, "g" }  // Map 2 to "g"
+        };
     }
 
     void Update()
@@ -96,8 +114,23 @@ public class Selector : MonoBehaviour
 
     private IEnumerator DestroySelectedObjectAfterDelay(GameObject selectedObject, float delay)
     {
+        string selectedColor;
+        int selectedLevel;
+        GetSelectedPieceInfo(selectedObject.name, out selectedLevel, out selectedColor);
+        commandDispatcher.DispatchFinishedMove(selectedLevel, selectedColor);
+
         yield return new WaitForSeconds(delay);
         Destroy(selectedObject);
         selection = null; // Clear the selection after destruction
+    }
+
+    private void GetSelectedPieceInfo(string selectedObjectName, out int selectedLevel, out string selectedColor)
+    {
+        // Extract the first character to determine the color
+        int pieceIndex = int.Parse(selectedObjectName[0].ToString());
+        selectedColor = colorMap[pieceIndex];
+
+        // Extract the first character of the parent name to determine the level
+        selectedLevel = int.Parse(selection.parent.name[0].ToString());
     }
 }

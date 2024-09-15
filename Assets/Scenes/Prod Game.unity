@@ -1759,13 +1759,29 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1014408437805533655, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 4_level (5)
+      objectReference: {fileID: 0}
+    - target: {fileID: 1067720151308130732, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 5_level (7)
+      objectReference: {fileID: 0}
     - target: {fileID: 1104083284936281695, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_PresetInfoIsWorld
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1359989667016194998, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 6_level (6)
+      objectReference: {fileID: 0}
     - target: {fileID: 1887421909409621996, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_CullingMask.m_Bits
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2059272185699595723, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 1_level (11)
       objectReference: {fileID: 0}
     - target: {fileID: 2171721177386294339, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_Name
@@ -1790,6 +1806,10 @@ PrefabInstance:
     - target: {fileID: 2631081744386499061, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: waveAmplitudeRotationX
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3095214327107485558, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 8_level (3)
       objectReference: {fileID: 0}
     - target: {fileID: 3651364272923498410, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_LocalPosition.y
@@ -1835,6 +1855,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4067029744381792184, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 11_level
+      objectReference: {fileID: 0}
     - target: {fileID: 4331103024552766673, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_RenderMode
       value: 1
@@ -1847,6 +1871,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5420030381754542165, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 7_level (4)
+      objectReference: {fileID: 0}
+    - target: {fileID: 5831535332538578855, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 9_level (2)
+      objectReference: {fileID: 0}
     - target: {fileID: 6392785375640497954, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 369.5
@@ -1855,9 +1887,21 @@ PrefabInstance:
       propertyPath: m_CullingMask.m_Bits
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 7382297695318427517, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 2_level (8)
+      objectReference: {fileID: 0}
     - target: {fileID: 7651273406827416915, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: selectableLayerMask.m_Bits
       value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8267355365699839005, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 10_level (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8616068684239008519, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 3_level (9)
       objectReference: {fileID: 0}
     - target: {fileID: 8639969124939020940, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: humanPlayer
@@ -1871,6 +1915,10 @@ PrefabInstance:
       propertyPath: playerTurnDisplay
       value: 
       objectReference: {fileID: 211552178}
+    - target: {fileID: 8708073721076819985, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+      propertyPath: m_Name
+      value: 0_level (10)
+      objectReference: {fileID: 0}
     - target: {fileID: 8953100495816143727, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_CullingMask.m_Bits
       value: 8

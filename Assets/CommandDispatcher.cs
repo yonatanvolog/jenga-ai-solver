@@ -37,9 +37,9 @@ public class CommandDispatcher : MonoBehaviour
         pythonListener.SendData(commandString);
     }
     
-    public void DispatchFinishedMove()
+    public void DispatchFinishedMove(int level, string color)
     {
-        string commandString = $"finished_move";
+        string commandString = $"finished_move {level} {color}";
         Debug.Log("sending to python: " + commandString);
 
         pythonListener.SendData(commandString);

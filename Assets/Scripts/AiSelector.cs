@@ -25,7 +25,9 @@ public class AiSelector : MonoBehaviour
     public float prevMaxOfMaxAngles = 0f; // Field to store the previous max of max tilt angles
 
     public bool lastActionWasRevert = false; // Flag to check if the last action was a revert
+    private Dictionary<int, string> colorMap;
 
+    
     // Array of Jenga levels to see in the Inspector
     [System.Serializable]
     public class JengaLevel
@@ -57,6 +59,13 @@ public class AiSelector : MonoBehaviour
     
     void Start()
     {
+        colorMap = new Dictionary<int, string>
+        {
+            { 0, "y" }, // Map 0 to "y"
+            { 1, "b" }, // Map 1 to "b"
+            { 2, "g" }  // Map 2 to "g"
+        };
+     
         // Find and assign CommandDispatcher
         commandDispatcher = FindObjectOfType<CommandDispatcher>();
         if (commandDispatcher == null)
@@ -235,9 +244,14 @@ public class AiSelector : MonoBehaviour
 
         return blockCount;
     }
-
+    
+    
     private async void PerformMove()
     {
+        int selectedLevel = aiPlayer.levelSelect;
+        string selectedcolor = colorMap[(int)aiPlayer.pieceSelect];
+
+        
         // Validate the levelSelect and pieceSelect values
         if (aiPlayer.levelSelect < 0 || aiPlayer.levelSelect >= jengaTowerLevels.Length)
         {
@@ -280,14 +294,14 @@ public class AiSelector : MonoBehaviour
         // Perform the move (e.g., change material and destroy the piece)
         pieceSelected = true;
         StartCoroutine(TakeScreenshotAfterFrame());
-        // Save the current state before performing the move
-        SaveCurrentState();
-    
+        // Save the current state before performing the move, used only for GSBAS learning
+        //SaveCurrentState();
+        
         // Await FlashSelectedPiece without making PerformMove a coroutine
         await FlashSelectedPieceAsync(pieceTransform, 3);
     
         HandlePieceMoveQuick(pieceTransform);
-        commandDispatcher.DispatchFinishedMove();
+        commandDispatcher.DispatchFinishedMove(selectedLevel, selectedcolor);
     }
     
 
