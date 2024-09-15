@@ -5,11 +5,10 @@ using UnityEngine.UI;
 
 public enum PlayerType
 {
-    RANDOM = 0,
-    DQN = 1,
-    SARSA = 2,
-    GSBAS = 3,
-    HUMAN = 4
+    RANDOM,
+    DQN,
+    SARSA,
+    HUMAN
 }
 
 public class MainMenuManager : MonoBehaviour
@@ -114,9 +113,6 @@ public class MainMenuManager : MonoBehaviour
 
             case string s when s.StartsWith("SARSA"):
                 return PlayerType.SARSA;
-
-            case string s when s.StartsWith("GSBAS"):
-                return PlayerType.GSBAS;
 
             case string s when s.StartsWith("Human Player"):
                 return PlayerType.HUMAN;
