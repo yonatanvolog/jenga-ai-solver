@@ -1,7 +1,6 @@
 using UnityEngine;
 using TMPro;
 using System;
-using UnityEditor.Build.Content;
 using UnityEngine.UI;
 
 public enum PlayerType
@@ -174,7 +173,7 @@ public class MainMenuManager : MonoBehaviour
             mainMenu.SetActive(false);
             gameInfo.SetActive(true);
             cameraController.ToggleMenuMode(false);
-            //cameraController.ToggleMouseControl(true);
+            cameraController.ToggleMouseControl(true);
         }
         else
         {
