@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System;
+using UnityEditor.Build.Content;
 using UnityEngine.UI;
 
 public enum PlayerType
@@ -27,7 +28,8 @@ public class MainMenuManager : MonoBehaviour
     public CameraController cameraController;
     public bool menu_status = false;
     public CommandDispatcher commandDispatcher;  // Add CommandDispatcher field
-
+    public GameObject gameInfo;
+    
     void Start()
     {
         // Find CommandDispatcher in the scene
@@ -170,6 +172,7 @@ public class MainMenuManager : MonoBehaviour
         {
             menu_status = false;
             mainMenu.SetActive(false);
+            gameInfo.SetActive(true);
             cameraController.ToggleMenuMode(false);
             cameraController.ToggleMouseControl(true);
         }
@@ -177,6 +180,7 @@ public class MainMenuManager : MonoBehaviour
         {
             menu_status = true;
             mainMenu.SetActive(true);
+            gameInfo.SetActive(false);
             cameraController.ToggleMenuMode(true);
             cameraController.ToggleMouseControl(false);
         }

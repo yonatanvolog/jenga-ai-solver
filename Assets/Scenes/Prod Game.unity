@@ -540,7 +540,9 @@ MonoBehaviour:
   quitButton: {fileID: 437849940}
   mainMenu: {fileID: 2004583132}
   cameraController: {fileID: 0}
+  menu_status: 0
   commandDispatcher: {fileID: 0}
+  gameInfo: {fileID: 2360049007728373875}
 --- !u!4 &559144247 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3821852285116903060, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
@@ -1755,7 +1757,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 407162374132144531, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1104083284936281695, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_PresetInfoIsWorld
@@ -1890,6 +1892,11 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 541667691}
   m_SourcePrefab: {fileID: 100100000, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+--- !u!1 &2360049007728373875 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 407162374132144531, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
+  m_PrefabInstance: {fileID: 2360049007728373874}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
