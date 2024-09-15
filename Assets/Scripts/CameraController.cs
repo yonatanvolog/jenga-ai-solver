@@ -61,7 +61,6 @@ public class CameraController : MonoBehaviour
         // Menu mode rotation with wave effect
         if (isMenuModeEnabled)
         {
-            print("timescale :" + Time.timeScale);
             menuRotationAngle += (rotationSpeed + 22) * Time.deltaTime * (1 / Time.timeScale); // Rotate smoothly, adjust rotation speed to menu/human mode
 
             // Apply the wave effect using the sine function for Y position and X rotation

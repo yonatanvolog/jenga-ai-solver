@@ -69,7 +69,7 @@ public class MainMenuManager : MonoBehaviour
     void Update()
     {
         // Enable the main menu if ESC is pressed
-        if (Input.GetKeyDown(KeyCode.Escape))
+        if (Input.GetKeyDown(KeyCode.Escape) && mainMenu.activeSelf == false)
         {
             commandDispatcher.DispatchEndGame();
             ToggleMainMenu();
@@ -174,7 +174,7 @@ public class MainMenuManager : MonoBehaviour
             mainMenu.SetActive(false);
             gameInfo.SetActive(true);
             cameraController.ToggleMenuMode(false);
-            cameraController.ToggleMouseControl(true);
+            //cameraController.ToggleMouseControl(true);
         }
         else
         {

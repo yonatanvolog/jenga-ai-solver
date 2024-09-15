@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using UnityEngine;
 
 public class AiSelector : MonoBehaviour
@@ -165,8 +166,37 @@ public class AiSelector : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Flash the selected piece between highlightMaterial and selectionMaterial.
+    /// </summary>
+    /// <param name="pieceTransform">The transform of the piece to flash.</param>
+    /// <param name="flashTimes">The number of times to alternate between materials.</param>
+    /// <returns>Coroutine that alternates materials and waits for completion.</returns>
+    private async Task FlashSelectedPieceAsync(Transform pieceTransform, int flashTimes)
+    {
+        MeshRenderer pieceRenderer = pieceTransform.GetComponent<MeshRenderer>();
 
+        if (pieceRenderer == null)
+        {
+            Debug.LogError("Selected piece does not have a MeshRenderer component.");
+            return;
+        }
 
+        Material originalMaterial = pieceRenderer.material;
+
+        for (int i = 0; i < flashTimes; i++)
+        {
+            pieceRenderer.material = highlightMaterial;
+            await Task.Delay((int)(highlightTime * 1000)); // Use Task.Delay for async delay
+
+            pieceRenderer.material = selectionMaterial;
+            await Task.Delay((int)(selectedTime * 1000)); // Use Task.Delay for async delay
+        }
+
+        pieceRenderer.material = originalMaterial;
+    }
+
+    
     /// <summary>
     /// Get the number of blocks in a specific level of the Jenga tower.
     /// This method receives a level (0 is the top) and returns a value from 0 to 3.
@@ -206,7 +236,7 @@ public class AiSelector : MonoBehaviour
         return blockCount;
     }
 
-    private void PerformMove()
+    private async void PerformMove()
     {
         // Validate the levelSelect and pieceSelect values
         if (aiPlayer.levelSelect < 0 || aiPlayer.levelSelect >= jengaTowerLevels.Length)
@@ -252,9 +282,14 @@ public class AiSelector : MonoBehaviour
         StartCoroutine(TakeScreenshotAfterFrame());
         // Save the current state before performing the move
         SaveCurrentState();
+    
+        // Await FlashSelectedPiece without making PerformMove a coroutine
+        await FlashSelectedPieceAsync(pieceTransform, 3);
+    
         HandlePieceMoveQuick(pieceTransform);
         commandDispatcher.DispatchFinishedMove();
     }
+    
 
     private void SaveCurrentState()
     {
