@@ -31,7 +31,7 @@ public class CameraController : MonoBehaviour
     public float waveAmplitudeRotationX = 10.0f; // How much the X rotation should change
     public float waveFrequency = 1.0f; // Speed of the wave
 
-    void Start()
+    public void Start()
     {
         // Create deep copies of the target's position and rotation
         if (target != null)

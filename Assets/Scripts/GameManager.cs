@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
     public PlayerType currentPlayerType;
     public int currentPlayerIndex;
     public int currentRoundNum;
-
+    public CameraController cameraController;
     private bool isPlayerTurn;
 
     // Private field to store the GameManager instance
@@ -54,6 +54,13 @@ public class GameManager : MonoBehaviour
         if (aiSelector == null)
         {
             Debug.LogError("AiSelector component not found in the scene.");
+        }
+        
+        // Find and assign cameraController
+        cameraController = FindObjectOfType<CameraController>();
+        if (cameraController == null)
+        {
+            Debug.LogError("CameraController component not found in the scene.");
         }
         
         // Find and assign CommandDispatcher
@@ -95,7 +102,8 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            // AI player's turn will be handled by Python via commands
+            // AI player's turn will be handled by Python via commands, Start returns camera to default position
+            cameraController.Start();
             Debug.Log("AI Player turn. Waiting for Python command to remove a piece.");
         }
     }
