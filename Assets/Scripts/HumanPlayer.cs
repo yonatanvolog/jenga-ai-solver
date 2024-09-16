@@ -3,14 +3,14 @@ using UnityEngine;
 
 public class HumanPlayer : MonoBehaviour
 {
-    public Selector selector;
-    
+    [SerializeField] private Selector selector;
+
     public IEnumerator HandleTurn()
     {
         selector.enabled = true;
         while (!selector.IsPieceSelected())
         {
-            yield return null; // Wait for the next frame
+            yield return null;
         }
         selector.enabled = false;
     }

@@ -3,7 +3,7 @@ using System.Threading;
 
 public class CommandHandler : MonoBehaviour
 {
-    public enum CommandType
+    private enum CommandType
     {
         Remove,
         Reset,
@@ -15,60 +15,59 @@ public class CommandHandler : MonoBehaviour
         SetFallDetectDistance,
         GetNumOfBlocksInLevel,
         GetAverageMaxTiltAngle,
-        GetMostMaxTiltAngle, // Added new command for max tilt angle
-        PlayerTurn, // Added new command for handling player turn
+        GetMostMaxTiltAngle,
+        PlayerTurn,
         RevertStep,
-        ToggleMenu, // Added new command for toggling menu
+        ToggleMenu,
         Unknown
     }
 
-    public AIPlayerAPI aiPlayerAPI;
-    public PhysicMaterial jengaPhysicsMaterial;  // Assign this in the Inspector or via script
+    [SerializeField] private AIPlayerAPI aiPlayerAPI;
+    [SerializeField] private PhysicMaterial jengaPhysicsMaterial;
     private GameManager gameManager;
-    private Screenshot screenshot;  // Field to store the Screenshot component
-    private FallDetectModifier fallDetectModifier; // Field to store the FallDetectModifier component
-    private AiSelector aiSelector; // Field to store the AiSelector component
+    private Screenshot screenshot;
+    private FallDetectModifier fallDetectModifier;
+    private AiSelector aiSelector;
     private SynchronizationContext mainThreadContext;
 
     void Start()
     {
         if (aiPlayerAPI == null)
         {
-            aiPlayerAPI = GameObject.FindObjectOfType<AIPlayerAPI>();
+            aiPlayerAPI = FindObjectOfType<AIPlayerAPI>();
         }
 
-        gameManager = GameObject.FindObjectOfType<GameManager>();
+        gameManager = FindObjectOfType<GameManager>();
         if (gameManager == null)
         {
             Debug.LogError("GameManager not found in the scene.");
         }
 
-        screenshot = GameObject.FindObjectOfType<Screenshot>();
+        screenshot = FindObjectOfType<Screenshot>();
         if (screenshot == null)
         {
             Debug.LogError("Screenshot component not found in the scene.");
         }
 
-        fallDetectModifier = GameObject.FindObjectOfType<FallDetectModifier>();
+        fallDetectModifier = FindObjectOfType<FallDetectModifier>();
         if (fallDetectModifier == null)
         {
             Debug.LogError("FallDetectModifier component not found in the scene.");
         }
 
-        aiSelector = GameObject.FindObjectOfType<AiSelector>();
+        aiSelector = FindObjectOfType<AiSelector>();
         if (aiSelector == null)
         {
             Debug.LogError("AiSelector component not found in the scene.");
         }
 
-        // Capture the synchronization context of the main thread
         mainThreadContext = SynchronizationContext.Current;
     }
 
     public string HandleCommand(string data)
     {
         CommandType commandType = ParseCommand(data);
-        string response = "ACK"; // Default response
+        string response = "ACK";
 
         switch (commandType)
         {
@@ -102,16 +101,16 @@ public class CommandHandler : MonoBehaviour
             case CommandType.GetAverageMaxTiltAngle:
                 mainThreadContext.Send(_ => response = HandleGetAverageMaxTiltAngle(), null);
                 break;
-            case CommandType.GetMostMaxTiltAngle: // New case for max tilt angle
+            case CommandType.GetMostMaxTiltAngle:
                 mainThreadContext.Send(_ => response = HandleGetMostMaxTiltAngle(), null);
                 break;
-            case CommandType.PlayerTurn: // Added new case for handling player turn
+            case CommandType.PlayerTurn:
                 HandlePlayerTurnCommand(data);
                 break;
             case CommandType.RevertStep:
                 mainThreadContext.Send(_ => response = HandleRevertStep(), null); 
                 break;
-            case CommandType.ToggleMenu: // Added case for toggling menu
+            case CommandType.ToggleMenu:
                 HandleToggleMenuCommand();
                 break;
             case CommandType.Unknown:
@@ -125,66 +124,22 @@ public class CommandHandler : MonoBehaviour
 
     private CommandType ParseCommand(string data)
     {
-        if (data.StartsWith("remove"))
-        {
-            return CommandType.Remove;
-        }
-        else if (data.Equals("reset"))
-        {
-            return CommandType.Reset;
-        }
-        else if (data.StartsWith("timescale"))
-        {
-            return CommandType.Timescale;
-        }
-        else if (data.StartsWith("staticfriction"))
-        {
-            return CommandType.SetStaticFriction;
-        }
-        else if (data.StartsWith("dynamicfriction"))
-        {
-            return CommandType.SetDynamicFriction;
-        }
-        else if (data.StartsWith("set_screenshot_res"))
-        {
-            return CommandType.SetScreenshotRes;
-        }
-        else if (data.Equals("isfallen"))
-        {
-            return CommandType.IsFallen;
-        }
-        else if (data.StartsWith("set_fall_detect_distance"))
-        {
-            return CommandType.SetFallDetectDistance;
-        }
-        else if (data.StartsWith("get_num_of_blocks_in_level"))
-        {
-            return CommandType.GetNumOfBlocksInLevel;
-        }
-        else if (data.StartsWith("get_average_max_tilt_angle"))
-        {
-            return CommandType.GetAverageMaxTiltAngle;
-        }
-        else if (data.StartsWith("get_most_max_tilt_angle")) // New parsing for max tilt angle
-        {
-            return CommandType.GetMostMaxTiltAngle;
-        }
-        else if (data.StartsWith("player_turn")) // Parsing for the player turn command
-        {
-            return CommandType.PlayerTurn;
-        }
-        else if (data.StartsWith("revert_step"))
-        {
-            return CommandType.RevertStep;
-        }
-        else if (data.Equals("toggle_menu")) // Parsing for the toggle_menu command
-        {
-            return CommandType.ToggleMenu;
-        }
-        else
-        {
-            return CommandType.Unknown;
-        }
+        if (data.StartsWith("remove")) return CommandType.Remove;
+        if (data.Equals("reset")) return CommandType.Reset;
+        if (data.StartsWith("timescale")) return CommandType.Timescale;
+        if (data.StartsWith("staticfriction")) return CommandType.SetStaticFriction;
+        if (data.StartsWith("dynamicfriction")) return CommandType.SetDynamicFriction;
+        if (data.StartsWith("set_screenshot_res")) return CommandType.SetScreenshotRes;
+        if (data.Equals("isfallen")) return CommandType.IsFallen;
+        if (data.StartsWith("set_fall_detect_distance")) return CommandType.SetFallDetectDistance;
+        if (data.StartsWith("get_num_of_blocks_in_level")) return CommandType.GetNumOfBlocksInLevel;
+        if (data.StartsWith("get_average_max_tilt_angle")) return CommandType.GetAverageMaxTiltAngle;
+        if (data.StartsWith("get_most_max_tilt_angle")) return CommandType.GetMostMaxTiltAngle;
+        if (data.StartsWith("player_turn")) return CommandType.PlayerTurn;
+        if (data.StartsWith("revert_step")) return CommandType.RevertStep;
+        if (data.Equals("toggle_menu")) return CommandType.ToggleMenu;
+
+        return CommandType.Unknown;
     }
 
     private void HandleRemoveCommand(string data)
@@ -214,7 +169,6 @@ public class CommandHandler : MonoBehaviour
     private void HandleResetCommand()
     {
         Debug.Log("Reset command received.");
-
         if (gameManager != null)
         {
             mainThreadContext.Post(_ => gameManager.RestartGame(), null);
@@ -324,14 +278,14 @@ public class CommandHandler : MonoBehaviour
         return averageTiltAngle.ToString();
     }
 
-    private string HandleGetMostMaxTiltAngle() // Handler for most max tilt angle
+    private string HandleGetMostMaxTiltAngle()
     {
         float maxTiltAngle = aiSelector != null ? aiSelector.GetMaxOfMaxAngles() : 0f;
         Debug.Log($"Most max tilt angle: {maxTiltAngle}");
         return maxTiltAngle.ToString();
     }
 
-    private void HandlePlayerTurnCommand(string data) // New handler for player turn command
+    private void HandlePlayerTurnCommand(string data)
     {
         string[] parts = data.Split(' ');
         if (parts.Length == 4 && int.TryParse(parts[1], out int playerType) &&
@@ -346,7 +300,7 @@ public class CommandHandler : MonoBehaviour
         }
     }
 
-    private void HandleToggleMenuCommand() // Handler for toggle_menu command
+    private void HandleToggleMenuCommand()
     {
         if (gameManager != null)
         {
@@ -359,7 +313,7 @@ public class CommandHandler : MonoBehaviour
         }
     }
 
-    private string HandleRevertStep() 
+    private string HandleRevertStep()
     {
         if (aiSelector != null)
         {

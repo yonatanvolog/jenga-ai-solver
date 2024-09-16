@@ -3,10 +3,10 @@ using System.Collections;
 
 public class FallDetectModifier : MonoBehaviour
 {
-    public GameObject topCollider;
-    public GameObject leftCollider;
-    public GameObject rightCollider;
-    public GameObject bottomCollider;
+    [SerializeField] private GameObject topCollider;
+    [SerializeField] private GameObject leftCollider;
+    [SerializeField] private GameObject rightCollider;
+    [SerializeField] private GameObject bottomCollider;
 
     private Transform topTransform;
     private Transform leftTransform;
@@ -18,14 +18,14 @@ public class FallDetectModifier : MonoBehaviour
     private MeshRenderer rightMeshRenderer;
     private MeshRenderer bottomMeshRenderer;
 
-    public Vector3 topMoveDirection = Vector3.down;     // Default direction for top collider
-    public Vector3 leftMoveDirection = Vector3.left;    // Default direction for left collider
-    public Vector3 rightMoveDirection = Vector3.right;  // Default direction for right collider
-    public Vector3 bottomMoveDirection = Vector3.up;    // Default direction for bottom collider
+    [SerializeField] private Vector3 topMoveDirection = Vector3.down;
+    [SerializeField] private Vector3 leftMoveDirection = Vector3.left;
+    [SerializeField] private Vector3 rightMoveDirection = Vector3.right;
+    [SerializeField] private Vector3 bottomMoveDirection = Vector3.up;
 
-    public float growthFactor = 2.0f;    // Growth factor for top and bottom collider's z-scale
+    [SerializeField] private float growthFactor = 2.0f;
 
-    private bool isCoroutineRunning = false; // Flag to prevent overlapping coroutines
+    private bool isCoroutineRunning = false;
 
     void Start()
     {
@@ -53,7 +53,7 @@ public class FallDetectModifier : MonoBehaviour
 
     public void SetDistance(float value)
     {
-        if (!isCoroutineRunning) // Check if a coroutine is already running
+        if (!isCoroutineRunning)
         {
             StartCoroutine(HandleSetDistance(value));
         }
@@ -63,22 +63,11 @@ public class FallDetectModifier : MonoBehaviour
     {
         isCoroutineRunning = true;
 
-        // Enable MeshRenderers
         SetMeshRendererEnabled(true);
-
-        // Wait for 0.5 seconds
-        //yield return new WaitForSeconds(0.5f);
-
-        // Lerp the colliders to their new positions over 1 second
         yield return StartCoroutine(LerpColliders(value, 0f));
-
-        // Wait for another 0.5 seconds
-        //yield return new WaitForSeconds(0.5f);
-
-        // Disable MeshRenderers
         SetMeshRendererEnabled(false);
 
-        isCoroutineRunning = false; // Reset the flag
+        isCoroutineRunning = false;
     }
 
     private IEnumerator LerpColliders(float value, float duration)
@@ -131,7 +120,6 @@ public class FallDetectModifier : MonoBehaviour
             yield return null;
         }
 
-        // Ensure final positions and scales are exactly at target
         if (topTransform != null)
         {
             topTransform.position = targetTopPosition;

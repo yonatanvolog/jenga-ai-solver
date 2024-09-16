@@ -7,7 +7,6 @@ public class FallDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Assuming any collision indicates the tower has fallen
         if (other.CompareTag("Selectable"))
         {
             OnTowerFall?.Invoke();

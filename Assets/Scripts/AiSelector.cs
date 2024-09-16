@@ -5,86 +5,58 @@ using UnityEngine;
 
 public class AiSelector : MonoBehaviour
 {
-    public Material highlightMaterial;
-    public Material selectionMaterial;
-    public float highlightTime = 1.0f; // Time to show highlight material
-    public float selectedTime = 1.0f;  // Time to show selected material before destruction
-    public bool delayEnabled = true; // Field to enable/disable delay
+    [SerializeField] private Material highlightMaterial;
+    [SerializeField] private Material selectionMaterial;
+    [SerializeField] private float highlightTime = 1.0f;
+    [SerializeField] private float selectedTime = 1.0f;
+    [SerializeField] private bool delayEnabled = true;
+    [SerializeField] private AIPlayerAPI aiPlayer;
 
-    public AIPlayerAPI aiPlayer;
+    [SerializeField] private GameObject jengaTower;
+    [SerializeField] private GameObject prevJengaTower;
 
-    private Material originalMaterialHighlight;
-    private Material originalMaterialSelection;
+    [SerializeField] private int updateFrameInterval = 10;
+    [SerializeField] private CommandDispatcher commandDispatcher;
+
     private bool pieceSelected;
+    private bool lastActionWasRevert = false;
+    private float prevAverageOfMaxAngles = 0f;
+    private float prevMaxOfMaxAngles = 0f;
+    private int towerInstanceCounter = 0;
+    private int frameCounter = 0;
 
-    // Reference to the Jenga tower object
-    public GameObject jengaTower;
-    public GameObject prevJengaTower; // Field to store the previous Jenga tower state
-
-    public float prevAverageOfMaxAngles = 0f; // Field to store the previous average of max tilt angles
-    public float prevMaxOfMaxAngles = 0f; // Field to store the previous max of max tilt angles
-
-    public bool lastActionWasRevert = false; // Flag to check if the last action was a revert
-    private Dictionary<int, string> colorMap;
-
-    
-    // Array of Jenga levels to see in the Inspector
     [System.Serializable]
     public class JengaLevel
     {
-        public Transform[] pieces = new Transform[3]; // Fixed size array of 3 pieces
+        public Transform[] pieces = new Transform[3];
     }
+    [SerializeField] private JengaLevel[] jengaTowerLevels;
 
-    [SerializeField]
-    public JengaLevel[] jengaTowerLevels;
+    private Material originalMaterialHighlight;
+    private Material originalMaterialSelection;
 
-    // Dictionary to track the maximum tilt angles for each piece
-    private Dictionary<Transform, float> pieceMaxTiltAngles = new Dictionary<Transform, float>();
-
-    // Reference to the Screenshot component
     private Screenshot screenshot;
-
-    // Reference to the GameManager
-    private GameManager gameManager;    
+    private GameManager gameManager;
     private FallDetectModifier fallDetectModifier;
 
+    private Dictionary<Transform, float> pieceMaxTiltAngles = new Dictionary<Transform, float>();
 
-    // Counter for instantiated Jenga towers
-    private int towerInstanceCounter = 0;
-    
-    // Field to control the frame interval for updates
-    public int updateFrameInterval = 10;
-    private int frameCounter = 0;
-    public CommandDispatcher commandDispatcher;
-    
     void Start()
     {
-        colorMap = new Dictionary<int, string>
-        {
-            { 0, "y" }, // Map 0 to "y"
-            { 1, "b" }, // Map 1 to "b"
-            { 2, "g" }  // Map 2 to "g"
-        };
-     
-        // Find and assign CommandDispatcher
         commandDispatcher = FindObjectOfType<CommandDispatcher>();
         if (commandDispatcher == null)
         {
             Debug.LogError("CommandDispatcher component not found in the scene.");
         }
-        
-        // Find the Screenshot object in the scene
-        screenshot = FindObjectOfType<Screenshot>();
 
+        screenshot = FindObjectOfType<Screenshot>();
         if (screenshot == null)
         {
             Debug.LogError("Screenshot component not found in the scene.");
         }
         fallDetectModifier = FindObjectOfType<FallDetectModifier>();
 
-        // Find the GameManager object in the scene
         gameManager = FindObjectOfType<GameManager>();
-
         if (gameManager == null)
         {
             Debug.LogError("GameManager component not found in the scene.");
@@ -97,39 +69,19 @@ public class AiSelector : MonoBehaviour
 
     public void UpdateAfterHumanTurn()
     {
-        // Print the structure of the Jenga tower after the move
-        //StartCoroutine(PrintJengaTowerStructure());
         ParseJengaTower();
         StartCoroutine(TakeScreenshotAfterFrame());
-    } 
-
-    private void OnEnable()
-    {
-        pieceSelected = false;
-    }
-
-    private void OnDisable()
-    {
-        pieceSelected = false;
-    }
-
-    public bool IsPieceSelected()
-    {
-        return pieceSelected;
     }
 
     private void ParseJengaTower()
     {
-        // Start the coroutine that introduces the delay before parsing the tower
         StartCoroutine(ParseJengaTowerWithDelay());
     }
 
     private IEnumerator ParseJengaTowerWithDelay()
     {
-        // Wait until the next physics update
         yield return new WaitForFixedUpdate();
 
-        // Clear the existing array to ensure it's up-to-date
         jengaTowerLevels = new JengaLevel[jengaTower.transform.childCount];
 
         if (jengaTower == null)
@@ -138,22 +90,17 @@ public class AiSelector : MonoBehaviour
             yield break;
         }
 
-        // Iterate over the levels in the Jenga tower
         int levelIndex = 0;
         foreach (Transform level in jengaTower.transform)
         {
             JengaLevel jengaLevel = new JengaLevel();
-
-            // Initialize all pieces to null
             for (int i = 0; i < 3; i++)
             {
                 jengaLevel.pieces[i] = null;
             }
 
-            // Iterate over the pieces in the current level
             foreach (Transform piece in level)
             {
-                // Check the first character of the piece name and assign it to the corresponding index
                 string pieceName = piece.name;
                 if (pieceName.StartsWith("0"))
                 {
@@ -169,18 +116,11 @@ public class AiSelector : MonoBehaviour
                 }
             }
 
-            // Add the level to the array
             jengaTowerLevels[levelIndex] = jengaLevel;
             levelIndex++;
         }
     }
 
-    /// <summary>
-    /// Flash the selected piece between highlightMaterial and selectionMaterial.
-    /// </summary>
-    /// <param name="pieceTransform">The transform of the piece to flash.</param>
-    /// <param name="flashTimes">The number of times to alternate between materials.</param>
-    /// <returns>Coroutine that alternates materials and waits for completion.</returns>
     private async Task FlashSelectedPieceAsync(Transform pieceTransform, int flashTimes)
     {
         MeshRenderer pieceRenderer = pieceTransform.GetComponent<MeshRenderer>();
@@ -196,21 +136,15 @@ public class AiSelector : MonoBehaviour
         for (int i = 0; i < flashTimes; i++)
         {
             pieceRenderer.material = highlightMaterial;
-            await Task.Delay((int)(highlightTime * 1000)); // Use Task.Delay for async delay
+            await Task.Delay((int)(highlightTime * 1000));
 
             pieceRenderer.material = selectionMaterial;
-            await Task.Delay((int)(selectedTime * 1000)); // Use Task.Delay for async delay
+            await Task.Delay((int)(selectedTime * 1000));
         }
 
         pieceRenderer.material = originalMaterial;
     }
 
-    
-    /// <summary>
-    /// Get the number of blocks in a specific level of the Jenga tower.
-    /// This method receives a level (0 is the top) and returns a value from 0 to 3.
-    /// The selection is reversed, similar to the PerformMove method.
-    /// </summary>
     public int GetNumOfBlocksInLevel(int level)
     {
         if (level < 0 || level >= jengaTowerLevels.Length)
@@ -219,7 +153,6 @@ public class AiSelector : MonoBehaviour
             return 0;
         }
 
-        // Print the number of blocks in all levels
         for (int i = 0; i < jengaTowerLevels.Length; i++)
         {
             int reversedIndex = jengaTowerLevels.Length - 1 - i;
@@ -227,7 +160,6 @@ public class AiSelector : MonoBehaviour
             Debug.Log($"Level {i} (Reversed Index {reversedIndex}): {numBlocks} blocks");
         }
 
-        // Reverse the level selection
         int reversedLevelIndex = jengaTowerLevels.Length - 1 - level;
 
         if (reversedLevelIndex < 0 || reversedLevelIndex >= jengaTowerLevels.Length)
@@ -244,107 +176,43 @@ public class AiSelector : MonoBehaviour
 
         return blockCount;
     }
-    
-    
+
     private async void PerformMove()
     {
         int selectedLevel = aiPlayer.levelSelect;
-        string selectedcolor = colorMap[(int)aiPlayer.pieceSelect];
-
-        
-        // Validate the levelSelect and pieceSelect values
+        string selectedColor = ColorMapping.GetColor((int)aiPlayer.pieceSelect);
         if (aiPlayer.levelSelect < 0 || aiPlayer.levelSelect >= jengaTowerLevels.Length)
         {
             Debug.LogError("Invalid levelSelect value.");
             return;
         }
-
-        // Reverse the level selection
         int reversedLevelIndex = jengaTowerLevels.Length - 1 - aiPlayer.levelSelect;
-
         if (reversedLevelIndex < 0 || reversedLevelIndex >= jengaTowerLevels.Length)
         {
             Debug.LogError("Invalid reversed level index.");
             return;
         }
-
         JengaLevel levelList = jengaTowerLevels[reversedLevelIndex];
-
         if (aiPlayer.pieceSelect < AIPlayerAPI.PieceType.Yellow || aiPlayer.pieceSelect > AIPlayerAPI.PieceType.Green)
         {
             Debug.LogError("Invalid pieceSelect value.");
             return;
         }
-
         int pieceIndex = (int)aiPlayer.pieceSelect;
-        if (pieceIndex < 0 || pieceIndex >= levelList.pieces.Length || levelList.pieces[pieceIndex] == null)
-        {
-            //Debug.LogError("Invalid pieceSelect index.");
-            //return;
-        }
-
         Transform pieceTransform = levelList.pieces[pieceIndex];
-
-        if (pieceTransform == null || pieceTransform.gameObject == null)
-        {
-            //Debug.Log("Piece has already been deleted.");
-            //return;
-        }
-
-        // Perform the move (e.g., change material and destroy the piece)
         pieceSelected = true;
-        // Save the current state before performing the move, used only for GSBAS learning
-        //SaveCurrentState();
-        
-        // Await FlashSelectedPiece without making PerformMove a coroutine
+
         await FlashSelectedPieceAsync(pieceTransform, 3);
         StartCoroutine(TakeScreenshotAfterFrame());
 
         HandlePieceMoveQuick(pieceTransform);
-        commandDispatcher.DispatchFinishedMove(selectedLevel, selectedcolor);
-    }
-    
-
-    private void SaveCurrentState()
-    {
-        if (jengaTower == null)
-        {
-            Debug.LogError("Jenga tower is null. Cannot save current state.");
-            return;
-        }
-        
-        // Disable the current Jenga tower
-        jengaTower.SetActive(false);
-
-        if (prevJengaTower != null && prevJengaTower != jengaTower)
-        {
-            Destroy(prevJengaTower);
-        }
-
-        // Create a copy of the Jenga tower and store the reference
-        prevJengaTower = Instantiate(jengaTower);
-        towerInstanceCounter++; // Increment the counter
-        prevJengaTower.name = jengaTower.name + "_" + towerInstanceCounter; // Set the name with index
-        prevJengaTower.SetActive(false); // Keep the previous tower inactive
-
-        // Enable the original Jenga tower back
-        jengaTower.SetActive(true);
-
-        // Save the current average tilt angle
-        prevAverageOfMaxAngles = GetAverageOfMaxAngles();
-        prevMaxOfMaxAngles = GetMaxOfMaxAngles();
-
-
-        // Set the last action flag to false since this is not a revert step
-        lastActionWasRevert = false;
+        commandDispatcher.DispatchFinishedMove(selectedLevel, selectedColor);
     }
 
     private IEnumerator TakeScreenshotAfterFrame()
     {
-        // Wait until the end of the frame before taking the screenshot
         yield return new WaitForEndOfFrame();
 
-        // Call TakeScreenshot after the frame has been rendered
         if (screenshot != null)
         {
             screenshot.TakeScreenshot();
@@ -353,96 +221,77 @@ public class AiSelector : MonoBehaviour
 
     private void HandlePieceMoveQuick(Transform pieceTransform)
     {
-        // Destroy the piece
         Destroy(pieceTransform.gameObject);
-        
-        // Print the structure of the Jenga tower after the move
-        //StartCoroutine(PrintJengaTowerStructure());
-
-        // Update the internal structure after the move
-        //ParseJengaTower();
-
-        // Reset the cubes' starting angles
         ResetCubesStartingAngles();
     }
     
-    
-    private IEnumerator PrintJengaTowerStructure()
+    // This method was used for GSBAS, but we decided not to use it and this method was depicted to improve performance
+    private void SaveCurrentState()
     {
-        // Wait until the next physics update
-        yield return new WaitForFixedUpdate();
-
-        Debug.Log("Jenga Tower Structure After Move:");
-        for (int i = 0; i < jengaTowerLevels.Length; i++)
+        if (jengaTower == null)
         {
-            Debug.Log($"Level {i}:");
-            for (int j = 0; j < jengaTowerLevels[i].pieces.Length; j++)
-            {
-                if (jengaTowerLevels[i].pieces[j] != null)
-                {
-                    Debug.Log($"  Piece at index {j}: {jengaTowerLevels[i].pieces[j].name}");
-                }
-                else
-                {
-                    Debug.Log($"  Empty at index {j}");
-                }
-            }
+            Debug.LogError("Jenga tower is null. Cannot save current state.");
+            return;
         }
-    }
 
+        jengaTower.SetActive(false);
+
+        if (prevJengaTower != null && prevJengaTower != jengaTower)
+        {
+            Destroy(prevJengaTower);
+        }
+
+        prevJengaTower = Instantiate(jengaTower);
+        towerInstanceCounter++;
+        prevJengaTower.name = jengaTower.name + "_" + towerInstanceCounter;
+        prevJengaTower.SetActive(false);
+
+        jengaTower.SetActive(true);
+
+        prevAverageOfMaxAngles = GetAverageOfMaxAngles();
+        prevMaxOfMaxAngles = GetMaxOfMaxAngles();
+
+        lastActionWasRevert = false;
+    }
+    
+    // This method was used for GSBAS, but we decided not to use it and this method was depicted to improve performance
     public void RevertStep()
     {
-        if (prevJengaTower != null)
+        if (prevJengaTower == null)
         {
-            // Replace the current Jenga tower with the previous one
-            if (jengaTower != null)
-            {
-                // Safeguard: Only destroy the current tower if it's not null
-                Destroy(jengaTower);
-                print("Current tower destroyed.");
-            }
-            else
-            {
-                Debug.LogWarning("No current Jenga tower to destroy.");
-            }
+            Debug.LogWarning("No previous state to revert to.");
+            return;
+        }
 
-            // Activate the previous Jenga tower
-            jengaTower = prevJengaTower;
-            jengaTower.SetActive(true);
-            prevJengaTower = null; // Clear the reference after reverting
-
-            // Update the internal representation of the Jenga tower
-            ParseJengaTower();
-
-            // Take an updated screenshot, Masha said it's not needed
-            //StartCoroutine(TakeScreenshotAfterFrame());
-
-            // Reset the cubes' starting angles
-            ResetCubesStartingAngles();
-
-            // Set the last action flag to true
-            lastActionWasRevert = true;
-
-            // Call ResetIsTowerFallen from GameManager
-            if (gameManager != null)
-            {
-                gameManager.ResetIsTowerFallen();
-            }
-
-            if (fallDetectModifier != null)
-            {
-                fallDetectModifier.ResetFallDetectors();
-            }
+        if (jengaTower != null)
+        {
+            Destroy(jengaTower);
+            print("Current tower destroyed.");
         }
         else
         {
-            Debug.LogWarning("No previous state to revert to.");
+            Debug.LogWarning("No current Jenga tower to destroy.");
+        }
+
+        jengaTower = prevJengaTower;
+        jengaTower.SetActive(true);
+        prevJengaTower = null;
+
+        ParseJengaTower();
+        ResetCubesStartingAngles();
+        lastActionWasRevert = true;
+
+        if (gameManager != null)
+        {
+            gameManager.ResetIsTowerFallen();
+        }
+
+        if (fallDetectModifier != null)
+        {
+            fallDetectModifier.ResetFallDetectors();
         }
     }
 
-    /// <summary>
-    /// Reset the maximum tilt angles for all cubes in the tower.
-    /// </summary>
     private void ResetCubesStartingAngles()
     {
         pieceMaxTiltAngles.Clear();
@@ -453,7 +302,6 @@ public class AiSelector : MonoBehaviour
             {
                 if (piece != null)
                 {
-                    // Initialize the dictionary with current tilt angles (absolute values)
                     float rollAngle = Mathf.DeltaAngle(0, piece.eulerAngles.x);
                     float pitchAngle = Mathf.DeltaAngle(0, piece.eulerAngles.z);
                     float currentTiltAngle = Mathf.Max(Mathf.Abs(rollAngle), Mathf.Abs(pitchAngle));
@@ -464,15 +312,10 @@ public class AiSelector : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Get the average of the maximum tilt angles recorded for all cubes.
-    /// </summary>
-    /// <returns>Average of maximum tilt angles</returns>
     public float GetAverageOfMaxAngles()
     {
         if (lastActionWasRevert)
         {
-            // If the last action was a revert, return the saved average
             return prevAverageOfMaxAngles;
         }
 
@@ -487,16 +330,11 @@ public class AiSelector : MonoBehaviour
 
         return totalMaxAngle / pieceMaxTiltAngles.Count;
     }
-    
-    /// <summary>
-    /// Get the maximum of the maximum tilt angles recorded for all cubes.
-    /// </summary>
-    /// <returns>Maximum of maximum tilt angles</returns>
+
     public float GetMaxOfMaxAngles()
     {
         if (lastActionWasRevert)
         {
-            // If the last action was a revert, return the saved maximum
             return prevMaxOfMaxAngles;
         }
 
@@ -519,18 +357,12 @@ public class AiSelector : MonoBehaviour
     {
         while (true)
         {
-            // Wait until it's time to update (based on the frame interval)
             if (frameCounter >= updateFrameInterval)
             {
-                // Perform the update
                 yield return StartCoroutine(UpdateMaxTiltAnglesForAllPiecesCoroutine());
-
-                // Reset the frame counter
                 frameCounter = 0;
             }
             frameCounter++;
-
-            // Wait until the next FixedUpdate to continue
             yield return new WaitForFixedUpdate();
         }
     }
@@ -543,17 +375,14 @@ public class AiSelector : MonoBehaviour
             {
                 if (piece != null && pieceMaxTiltAngles.ContainsKey(piece))
                 {
-                    // Calculate the absolute tilt angles relative to 0 degrees
                     float rollAngle = Mathf.DeltaAngle(0, piece.eulerAngles.x);
                     float pitchAngle = Mathf.DeltaAngle(0, piece.eulerAngles.z);
                     float currentTiltAngle = Mathf.Max(Mathf.Abs(rollAngle), Mathf.Abs(pitchAngle));
 
-                    // Update the maximum tilt angle if the current one is greater
                     pieceMaxTiltAngles[piece] = Mathf.Max(pieceMaxTiltAngles[piece], currentTiltAngle);
                 }
             }
 
-            // Yield control so the coroutine can run across multiple frames
             yield return null;
         }
     }

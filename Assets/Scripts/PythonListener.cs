@@ -7,20 +7,20 @@ using System.Threading;
 
 public class PythonListener : MonoBehaviour
 {
-    Thread thread;
-    public int connectionPort = 25001;
-    TcpListener server;
-    TcpClient client;
-    NetworkStream nwStream;  // Store the network stream for reuse
-    bool running;
+    private Thread thread;
+    [SerializeField] private int connectionPort = 25001;
+    private TcpListener server;
+    private TcpClient client;
+    private NetworkStream nwStream;
+    private bool running;
 
-    public CommandHandler commandHandler;
+    [SerializeField] private CommandHandler commandHandler;
 
     void Start()
     {
         if (commandHandler == null)
         {
-            commandHandler = GameObject.FindObjectOfType<CommandHandler>();
+            commandHandler = FindObjectOfType<CommandHandler>();
         }
 
         StartListener();
@@ -34,8 +34,10 @@ public class PythonListener : MonoBehaviour
         }
 
         running = true;
-        thread = new Thread(GetData);
-        thread.IsBackground = true;  // Mark thread as background to exit with the application
+        thread = new Thread(GetData)
+        {
+            IsBackground = true
+        };
         thread.Start();
     }
 
@@ -48,17 +50,19 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                if (server.Pending())  // Check if there is a pending connection
+                if (server.Pending())
                 {
                     client = server.AcceptTcpClient();
-                    nwStream = client.GetStream();  // Save the stream for sending data later
-                    Thread clientThread = new Thread(new ParameterizedThreadStart(HandleClient));
-                    clientThread.IsBackground = true;  // Ensure this thread exits when the application closes
+                    nwStream = client.GetStream();
+                    Thread clientThread = new Thread(HandleClient)
+                    {
+                        IsBackground = true
+                    };
                     clientThread.Start(client);
                 }
                 else
                 {
-                    Thread.Sleep(50);  // Sleep briefly to reduce CPU load when idle
+                    Thread.Sleep(50);
                 }
             }
             catch (SocketException ex)
@@ -68,7 +72,7 @@ public class PythonListener : MonoBehaviour
             }
         }
 
-        StopListener(); // Ensure the listener is stopped when exiting the loop
+        StopListener();
     }
 
     void HandleClient(object clientObj)
@@ -81,7 +85,7 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                if (nwStream.DataAvailable)  // Only read when data is available
+                if (nwStream.DataAvailable)
                 {
                     int bytesRead = nwStream.Read(buffer, 0, client.ReceiveBufferSize);
                     if (bytesRead > 0)
@@ -98,7 +102,7 @@ public class PythonListener : MonoBehaviour
                 }
                 else
                 {
-                    Thread.Sleep(50);  // Sleep briefly when no data is available to reduce CPU usage
+                    Thread.Sleep(50);
                 }
             }
             catch (SocketException socketEx)
@@ -111,7 +115,6 @@ public class PythonListener : MonoBehaviour
         client.Close();
     }
 
-    // Method to send data to Python
     public void SendData(string message, int maxRetryAttempts = 3, int retryDelayMilliseconds = 500)
     {
         int attempts = 0;
@@ -120,24 +123,22 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                using (TcpClient sendClient = new TcpClient("127.0.0.1", 25002))  // Connect to port 25002 for sending data
+                using (TcpClient sendClient = new TcpClient("127.0.0.1", 25002))
                 {
                     NetworkStream sendStream = sendClient.GetStream();
                     if (sendStream.CanWrite)
                     {
                         byte[] dataToSend = Encoding.UTF8.GetBytes(message);
                         sendStream.Write(dataToSend, 0, dataToSend.Length);
-                        sendStream.Flush();  // Ensure all data is sent immediately
+                        sendStream.Flush();
                         Debug.Log("Message sent to Python: " + message);
 
-                        // Optional: Read the response from Python
                         byte[] responseBuffer = new byte[sendClient.ReceiveBufferSize];
                         int bytesRead = sendStream.Read(responseBuffer, 0, sendClient.ReceiveBufferSize);
                         string response = Encoding.UTF8.GetString(responseBuffer, 0, bytesRead);
                         Debug.Log("Response from Python: " + response);
                     }
 
-                    // Exit if successful
                     break;
                 }
             }
@@ -151,18 +152,15 @@ public class PythonListener : MonoBehaviour
                     break;
                 }
 
-                // Wait for a bit before trying again
                 Thread.Sleep(retryDelayMilliseconds);
             }
             catch (Exception ex)
             {
                 Debug.Log($"Exception: {ex.Message}");
-                break;  // For non-socket exceptions, we should not retry
+                break;
             }
         }
     }
-
-
 
     public void StopListener()
     {
@@ -184,7 +182,7 @@ public class PythonListener : MonoBehaviour
         {
             try
             {
-                thread.Join(1000);  // Wait for up to 1 second for the thread to finish
+                thread.Join(1000);
             }
             catch (ThreadAbortException ex)
             {
