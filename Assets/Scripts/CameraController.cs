@@ -22,8 +22,8 @@ public class CameraController : MonoBehaviour
     private Vector3 targetPositionCopy;
     private Quaternion targetRotationCopy;
 
-    private bool isMouseControlEnabled = false; // Tracks if mouse control is enabled
-    private bool isMenuModeEnabled = true;    // Tracks if menu mode is enabled
+    private bool isMouseControlEnabled = true; // Tracks if mouse control is enabled
+    private bool isMenuModeEnabled = false;    // Tracks if menu mode is enabled
     private float menuRotationAngle = 0f;      // Tracks rotation for menu mode
 
     // Amplitude and frequency for the wave effect
