@@ -1445,7 +1445,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2171721177386294339, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_Name
-      value: Main Game Prefab Variant
+      value: New Main Game Prefab Variant
       objectReference: {fileID: 0}
     - target: {fileID: 2597322298282489293, guid: 8d8677f39a35ad640802f2e45a026738, type: 3}
       propertyPath: m_Enabled
