@@ -293,13 +293,13 @@ public class AiSelector : MonoBehaviour
 
         // Perform the move (e.g., change material and destroy the piece)
         pieceSelected = true;
-        StartCoroutine(TakeScreenshotAfterFrame());
         // Save the current state before performing the move, used only for GSBAS learning
         //SaveCurrentState();
         
         // Await FlashSelectedPiece without making PerformMove a coroutine
         await FlashSelectedPieceAsync(pieceTransform, 3);
-    
+        StartCoroutine(TakeScreenshotAfterFrame());
+
         HandlePieceMoveQuick(pieceTransform);
         commandDispatcher.DispatchFinishedMove(selectedLevel, selectedcolor);
     }
