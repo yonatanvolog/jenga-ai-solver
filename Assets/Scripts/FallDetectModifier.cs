@@ -51,23 +51,6 @@ public class FallDetectModifier : MonoBehaviour
         }
     }
 
-    void Update()
-    {
-        CheckInput();
-    }
-
-    private void CheckInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Equals) || Input.GetKeyDown(KeyCode.KeypadPlus))
-        {
-            SetDistance(0.1f);
-        }
-        else if (Input.GetKeyDown(KeyCode.Minus) || Input.GetKeyDown(KeyCode.KeypadMinus))
-        {
-            SetDistance(-0.1f);
-        }
-    }
-
     public void SetDistance(float value)
     {
         if (!isCoroutineRunning) // Check if a coroutine is already running

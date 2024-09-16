@@ -14,14 +14,6 @@ public class Screenshot : MonoBehaviour
         TakeScreenshot();
     }
 
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.S)) // Capture screenshot on 'S' key press
-        {
-            TakeScreenshot();
-        }
-    }
-
     public void SetFinalWidth(int width)
     {
         // Calculate resolutionWidth and resolutionHeight to maintain a 16:9 aspect ratio

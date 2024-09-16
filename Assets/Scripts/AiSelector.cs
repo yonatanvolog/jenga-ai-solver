@@ -98,9 +98,9 @@ public class AiSelector : MonoBehaviour
     public void UpdateAfterHumanTurn()
     {
         // Print the structure of the Jenga tower after the move
+        //StartCoroutine(PrintJengaTowerStructure());
         ParseJengaTower();
-        StartCoroutine(PrintJengaTowerStructure());
-        return;
+        StartCoroutine(TakeScreenshotAfterFrame());
     } 
 
     private void OnEnable()

@@ -116,6 +116,7 @@ public class GameManager : MonoBehaviour
         // Update AI selector after the human's turn is completed
         if (aiSelector != null)
         {
+            yield return new WaitForSeconds(0.25f);
             aiSelector.UpdateAfterHumanTurn();
         }
     }
